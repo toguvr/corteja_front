@@ -35,7 +35,7 @@ const menuItems = [
   // { label: 'Fidelidade', icon: <LoyaltyIcon />, page: '/fidelidade' },
 ];
 const menuItemsBottom = [
-  // { label: 'Perfil', icon: <PersonIcon />, page: '/perfil' },
+  { label: 'Perfil', icon: <PersonIcon />, page: '/perfil' },
   {
     label: 'Agendamentos',
     icon: <EventAvailableIcon />,

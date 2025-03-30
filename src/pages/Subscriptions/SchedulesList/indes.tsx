@@ -96,19 +96,13 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
                     variant={
                       selectedScheduleId === s.id ? 'contained' : 'outlined'
                     }
-                    // disabled={
-                    //   selectedScheduleId !== s.id &&
-                    //   !!s.limit &&
-                    //   Array.isArray(s.appointments) &&
-                    //   s.appointments.filter((a) => {
-                    //     const aDate = new Date(a.date);
-                    //     return (
-                    //       aDate.getFullYear() === selectedDate.getFullYear() &&
-                    //       aDate.getMonth() === selectedDate.getMonth() &&
-                    //       aDate.getDate() === selectedDate.getDate()
-                    //     );
-                    //   }).length >= s.limit
-                    // }
+                    disabled={
+                      !!s.limit &&
+                      Array.isArray(s.subscriptions) &&
+                      s.subscriptions.filter(
+                        (subscription: any) => subscription.active
+                      ).length >= s.limit
+                    }
                     onClick={() => onSelectTime?.(s)}
                     sx={{ minWidth: 80 }}
                   >

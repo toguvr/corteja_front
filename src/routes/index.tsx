@@ -8,8 +8,8 @@ import { ResetPassword } from '../pages/ResetPassword';
 import { PrivateRoute } from './Route';
 import CustomerAppointment from '../pages/CustomerAppointment';
 import Schedules from '../pages/Schedules';
-import Profile from '../pages/Profile';
 import Assinaturas from '../pages/Subscriptions';
+import EditCustomerProfile from '../pages/Profile';
 
 const AppRouter = () => {
   return (
@@ -26,7 +26,10 @@ const AppRouter = () => {
         path="/agendamentos"
         element={<PrivateRoute element={<Schedules />} />}
       />
-      <Route path="/perfil" element={<PrivateRoute element={<Profile />} />} />
+      <Route
+        path="/perfil"
+        element={<PrivateRoute element={<EditCustomerProfile />} />}
+      />
 
       <Route path="*" element={<h1>Página não encontrada</h1>} />
 

@@ -74,15 +74,19 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
                     disabled={
                       selectedScheduleId !== s.id &&
                       !!s.limit &&
-                      Array.isArray(s.appointments) &&
-                      s.appointments.filter((a) => {
-                        const aDate = new Date(a.date);
-                        return (
-                          aDate.getFullYear() === selectedDate.getFullYear() &&
-                          aDate.getMonth() === selectedDate.getMonth() &&
-                          aDate.getDate() === selectedDate.getDate()
-                        );
-                      }).length >= s.limit
+                      ((Array.isArray(s.appointments) &&
+                        s.appointments.filter((a) => {
+                          const aDate = new Date(a.date);
+                          return (
+                            aDate.getFullYear() ===
+                              selectedDate.getFullYear() &&
+                            aDate.getMonth() === selectedDate.getMonth() &&
+                            aDate.getDate() === selectedDate.getDate()
+                          );
+                        }).length >= s.limit) ||
+                        (Array.isArray(s.appointments) &&
+                          s.subscriptions.filter((sub) => sub.active).length >=
+                            s.limit))
                     }
                     onClick={() => onSelectTime?.(s)}
                     sx={{ minWidth: 80 }}
