@@ -28,6 +28,7 @@ import { theme } from '../../theme';
 import PublicLayout from '../../components/PublicLayout';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { key } from '../../config/key';
 
 export const SignIn = () => {
   const { signIn } = useAuth();
@@ -53,7 +54,9 @@ export const SignIn = () => {
       });
 
       await schema.validate(values, { abortEarly: false });
-      await signIn({ ...values, role: 'customer' });
+      const slug = localStorage.getItem(key.slug);
+
+      await signIn({ ...values, role: 'customer', page: '/agendar/' + slug });
     } catch (err: any) {
       if (err instanceof Yup.ValidationError) {
         setErrors(getValidationErrors(err));

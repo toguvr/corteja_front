@@ -7,14 +7,26 @@ import { SignIn } from '../pages/Signin';
 import { ResetPassword } from '../pages/ResetPassword';
 import { PrivateRoute } from './Route';
 import CustomerAppointment from '../pages/CustomerAppointment';
+import Schedules from '../pages/Schedules';
+import Profile from '../pages/Profile';
+import Assinaturas from '../pages/Subscriptions';
 
 const AppRouter = () => {
   return (
     <Routes>
       <Route
-        path="/barbearia/:slug"
+        path="/agendar/:slug"
         element={<PrivateRoute element={<CustomerAppointment />} />}
       />
+      <Route
+        path="/assinatura/:slug"
+        element={<PrivateRoute element={<Assinaturas />} />}
+      />
+      <Route
+        path="/agendamentos"
+        element={<PrivateRoute element={<Schedules />} />}
+      />
+      <Route path="/perfil" element={<PrivateRoute element={<Profile />} />} />
 
       <Route path="*" element={<h1>Página não encontrada</h1>} />
 

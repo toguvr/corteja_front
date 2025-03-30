@@ -21,7 +21,7 @@ import { toast } from 'react-toastify';
 
 export default function CustomerAppointment() {
   const { barbershop } = useBarbershop();
-  console.log(barbershop);
+
   const [form, setForm] = useState({
     barberId: '',
     barbershopId: barbershop?.id,
@@ -29,13 +29,13 @@ export default function CustomerAppointment() {
     serviceId: '',
     date: dayjs().format('YYYY-MM-DDTHH:mm'),
   });
-
   const [barbers, setBarbers] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [services, setServices] = useState([]);
 
   useEffect(() => {
     if (barbershop?.id) {
+      setForm({ ...form, barbershopId: barbershop?.id });
       api.get(`/barbers/barbershop/${barbershop?.id}`).then(({ data }) => {
         setBarbers(data);
         if (data.length === 1) {
@@ -45,14 +45,20 @@ export default function CustomerAppointment() {
           }));
         }
       });
-      api
-        .get(`/schedules/barbershop/${barbershop?.id}`)
-        .then(({ data }) => setSchedules(data));
+
       api
         .get(`/services/barbershop/${barbershop?.id}`)
         .then(({ data }) => setServices(data));
     }
   }, [barbershop?.id]);
+
+  useEffect(() => {
+    if (form?.barberId && barbershop?.id) {
+      api
+        .get(`/schedules/barbershop/${barbershop?.id}/barber/${form?.barberId}`)
+        .then(({ data }) => setSchedules(data));
+    }
+  }, [barbershop?.id, form?.barberId]);
 
   const handleChange = (e) => {
     setForm((prev) => ({
@@ -156,20 +162,20 @@ export default function CustomerAppointment() {
   const daysToShow = generateWeek(weekStart);
   return (
     <PrivateLayout>
-      <Box sx={{ alignSelf: 'center', flexDirection: 'column' }}>
+      <Box sx={{ alignSelf: 'center', flexDirection: 'column', width: '100%' }}>
         <Grid container spacing={2} mb={3}>
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               select
-              label="Barbeiro"
+              label="Profissional"
               name="barberId"
               value={form.barberId}
               onChange={handleChange}
             >
               {barbers.map((barber) => (
-                <MenuItem key={barber.id} value={barber.id}>
-                  {barber.name || 'Sem nome'}
+                <MenuItem key={barber?.id} value={barber?.id}>
+                  {barber?.name || 'Sem nome'}
                 </MenuItem>
               ))}
             </TextField>

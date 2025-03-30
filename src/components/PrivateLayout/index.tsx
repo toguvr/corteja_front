@@ -16,15 +16,11 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import { Avatar, Button, Menu, MenuItem } from '@mui/material';
 import { useAuth } from '../../hooks/auth';
 import PurchaseDialog from '../PurchaseDialog';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { key } from '../../config/key';
-import { useBarbershop } from '../../hooks/barbershop';
-import api from '../../services/api';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import { useBalance } from '../../hooks/balance';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -34,13 +30,17 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 const drawerWidth = 240;
 const menuItems = [
-  { label: 'Agendar', icon: <CalendarTodayIcon /> },
-  { label: 'Assinatura', icon: <WorkspacePremiumIcon /> },
-  { label: 'Agendamentos', icon: <EventAvailableIcon /> },
-  { label: 'Fidelidade', icon: <LoyaltyIcon /> },
+  { label: 'Agendar', icon: <CalendarTodayIcon />, page: '/agendar' },
+  { label: 'Assinatura', icon: <WorkspacePremiumIcon />, page: '/assinatura' },
+  // { label: 'Fidelidade', icon: <LoyaltyIcon />, page: '/fidelidade' },
 ];
 const menuItemsBottom = [
-  { label: 'Perfil', icon: <PersonIcon /> },
+  // { label: 'Perfil', icon: <PersonIcon />, page: '/perfil' },
+  {
+    label: 'Agendamentos',
+    icon: <EventAvailableIcon />,
+    page: '/agendamentos',
+  },
   { label: 'Sair', icon: <LogoutIcon /> },
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -129,13 +129,9 @@ export default function PrivateLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
+  const slug = localStorage.getItem(key.slug);
 
-  React.useEffect(() => {
-    if (slug) {
-      localStorage.setItem(key.slug, slug);
-    }
-  }, [slug]);
   const { user, signOut } = useAuth();
   const { balance } = useBalance();
   const theme = useTheme();
@@ -189,7 +185,7 @@ export default function PrivateLayout({
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', width: '100%' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
@@ -252,6 +248,9 @@ export default function PrivateLayout({
           {menuItems.map((item, index) => (
             <ListItem key={item.label} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
+                onClick={
+                  item.page ? () => navigate(item.page + '/' + slug) : signOut
+                }
                 sx={[
                   {
                     minHeight: 48,
@@ -304,6 +303,7 @@ export default function PrivateLayout({
           {menuItemsBottom.map((item, index) => (
             <ListItem key={item.label} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
+                onClick={item.page ? () => navigate(item.page) : signOut}
                 sx={[
                   {
                     minHeight: 48,
@@ -358,13 +358,28 @@ export default function PrivateLayout({
           flexGrow: 1,
           alignSelf: 'center',
           p: 3,
-          maxWidth: '1150px',
           flexDirection: 'column',
           display: 'flex',
+          alignItems: 'center',
+          width: '100%',
         }}
       >
         <DrawerHeader />
-        {children}
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            alignSelf: 'center',
+            p: 3,
+            maxWidth: '1150px',
+            flexDirection: 'column',
+            display: 'flex',
+            alignItems: 'center',
+            width: '100%',
+          }}
+        >
+          {children}
+        </Box>
       </Box>
       {renderMenu}
       <PurchaseDialog openForm={openForm} setOpenForm={setOpenForm} />

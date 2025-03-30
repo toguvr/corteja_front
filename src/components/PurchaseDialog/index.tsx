@@ -32,6 +32,7 @@ import { useBarbershopServices } from '../../hooks/service';
 import { ServiceDto } from '../../dtos';
 import { useBalance } from '../../hooks/balance';
 import * as Yup from 'yup';
+import { isValidCellphone, isValidCPF } from '../../utils/validators';
 
 const steps = ['Escolher Serviços', 'Seus Dados', 'Resumo do Pedido'];
 
@@ -138,29 +139,7 @@ export default function PurchaseDialog({
     const totalCentavos = cart.reduce((acc, item) => acc + item?.amount, 0);
     return totalCentavos;
   }
-  const isValidCPF = (cpf: string): boolean => {
-    cpf = cpf.replace(/\D/g, ''); // Remove caracteres não numéricos
 
-    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-
-    const calcCheckDigit = (base: string, factor: number) =>
-      base
-        .split('')
-        .reduce((sum, num, index) => sum + parseInt(num) * (factor - index), 0);
-
-    const digit1 = (calcCheckDigit(cpf.substring(0, 9), 10) * 10) % 11;
-    const digit2 = (calcCheckDigit(cpf.substring(0, 10), 11) * 10) % 11;
-
-    return (
-      digit1 % 10 === parseInt(cpf[9]) && digit2 % 10 === parseInt(cpf[10])
-    );
-  };
-
-  // Função para validar número de celular brasileiro
-  const isValidCellphone = (phone: string): boolean => {
-    phone = phone.replace(/\D/g, ''); // Remove caracteres não numéricos
-    return /^(\d{2})?(9\d{8})$/.test(phone); // Aceita formato com ou sem DDD
-  };
   async function handleGeneratePix() {
     setLoading(true);
 
@@ -250,7 +229,6 @@ export default function PurchaseDialog({
             const formData = new FormData(event.currentTarget);
             const formJson = Object.fromEntries((formData as any).entries());
             const email = formJson.email;
-            console.log(email);
             handleClose();
           },
         },
@@ -417,7 +395,7 @@ export default function PurchaseDialog({
               >
                 <Box display="flex" alignItems="center" gap={0.5}>
                   <Typography>Tarifa de processamento</Typography>
-                  <Tooltip title="Esta tarifa garante o seu pagamento e nos possibilita fazer pagamentos ao seu barbeiro quando você concluir as seus agendamentos">
+                  <Tooltip title="Esta tarifa garante o seu pagamento e nos possibilita fazer pagamentos ao seu profissional quando você concluir as seus agendamentos">
                     <InfoOutlinedIcon fontSize="small" />
                   </Tooltip>
                 </Box>

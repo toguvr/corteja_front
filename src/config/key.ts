@@ -4,4 +4,6 @@ export const key = {
   user: '@corteja.user',
   barbershop: '@corteja.barbershop',
   slug: '@corteja.slug',
+  userCards: '@corteja.userCards',
+  userAddresses: '@corteja.userAddresses',
 };

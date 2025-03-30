@@ -59,27 +59,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return {} as AuthState;
   });
 
-  const signIn = useCallback(
-    async ({ email, password, page, role }: SignInCredentials) => {
-      const response = await api.post('authentications', {
-        email,
-        password,
-        role,
-      });
+  const signIn = async ({ email, password, page, role }: SignInCredentials) => {
+    const response = await api.post('authentications', {
+      email,
+      password,
+      role,
+    });
 
-      const { access_token, user, refresh_token } = response.data;
+    const { access_token, user, refresh_token } = response.data;
 
-      localStorage.setItem(key.refreshToken, refresh_token);
-      localStorage.setItem(key.token, access_token);
-      localStorage.setItem(key.user, JSON.stringify(user));
+    localStorage.setItem(key.refreshToken, refresh_token);
+    localStorage.setItem(key.token, access_token);
+    localStorage.setItem(key.user, JSON.stringify(user));
 
-      api.defaults.headers.authorization = `Bearer ${access_token}`;
+    api.defaults.headers.authorization = `Bearer ${access_token}`;
 
-      setData({ access_token, user, refresh_token });
-      navigate(page || '/dashboard');
-    },
-    []
-  );
+    setData({ access_token, user, refresh_token });
+    navigate(page || '/dashboard');
+  };
 
   const signOut = useCallback(() => {
     localStorage.removeItem(key.refreshToken);

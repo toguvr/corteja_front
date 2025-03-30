@@ -129,3 +129,29 @@ export interface BalanceDto {
   createdAt: Date;
   updatedAt: Date;
 }
+export interface PlanDto {
+  id: string;
+  interval: string | null;
+  price: number | null;
+  billingType: string | null;
+  chargeGatewayPlanId: string | null;
+  serviceId: string | null;
+  barbershopId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+// subscription.dto.ts
+export interface SubscriptionDto {
+  id: string;
+  scheduleId: string | null;
+  schedule: ScheduleDto;
+  planId: string | null;
+  customerId: string | null;
+  barbershopId: string | null;
+  barberId: string | null;
+  cardId: string | null;
+  active: boolean;
+  customer: CustomerDto;
+  plan: PlanDto;
+  barber: BarberDto;
+}
