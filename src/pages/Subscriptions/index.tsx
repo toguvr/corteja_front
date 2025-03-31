@@ -158,41 +158,47 @@ export default function Assinaturas() {
         ) : (
           <>
             <Grid container spacing={3} sx={{ mb: 4 }}>
-              {assinaturas.map((sub) => (
-                <Grid item xs={12} sm={6} md={4} key={sub.id}>
-                  <Card>
-                    <CardContent>
-                      <Typography variant="h6">{sub.plan_name}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Status: {sub.active ? 'Ativa' : 'Inativa'}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Valor:{' '}
-                        {(sub.plan.price / 100).toLocaleString('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        })}{' '}
-                        / ciclo
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Próxima cobrança:{' '}
-                        {new Date(sub.next_billing_at).toLocaleDateString(
-                          'pt-BR'
-                        )}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button
-                        size="small"
-                        color="error"
-                        onClick={() => alert(`Cancelar ${sub.id}`)}
-                      >
-                        Cancelar
-                      </Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
+              {assinaturas.length ? (
+                assinaturas.map((sub) => (
+                  <Grid item xs={12} sm={6} md={4} key={sub.id}>
+                    <Card>
+                      <CardContent>
+                        <Typography variant="h6">{sub.plan_name}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Status: {sub.active ? 'Ativa' : 'Inativa'}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Valor:{' '}
+                          {(sub.plan.price / 100).toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          })}{' '}
+                          / ciclo
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Próxima cobrança:{' '}
+                          {new Date(sub.next_billing_at).toLocaleDateString(
+                            'pt-BR'
+                          )}
+                        </Typography>
+                      </CardContent>
+                      <CardActions>
+                        <Button
+                          size="small"
+                          color="error"
+                          onClick={() => alert(`Cancelar ${sub.id}`)}
+                        >
+                          Cancelar
+                        </Button>
+                      </CardActions>
+                    </Card>
+                  </Grid>
+                ))
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  Você ainda não tem nenhuma assinatura.
+                </Typography>
+              )}
             </Grid>
 
             <Typography variant="h5" gutterBottom>

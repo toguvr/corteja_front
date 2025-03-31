@@ -357,11 +357,11 @@ export default function PrivateLayout({
         sx={{
           flexGrow: 1,
           alignSelf: 'center',
-          p: 1,
+          px: 1,
+          py: 3,
           flexDirection: 'column',
           display: 'flex',
           alignItems: 'center',
-          width: '100%',
         }}
       >
         <DrawerHeader />

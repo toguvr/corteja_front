@@ -18,7 +18,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import { BarberDto, PlanDto, ScheduleDto } from '../../../dtos';
-import ScheduleList from '../SchedulesList/indes';
+import ScheduleList from '../SchedulesList';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useBarbershop } from '../../../hooks/barbershop';
 import CardDialog from '../CardDialog';
