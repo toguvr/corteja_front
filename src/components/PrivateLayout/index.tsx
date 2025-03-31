@@ -357,7 +357,7 @@ export default function PrivateLayout({
         sx={{
           flexGrow: 1,
           alignSelf: 'center',
-          p: 3,
+          p: 1,
           flexDirection: 'column',
           display: 'flex',
           alignItems: 'center',
@@ -370,7 +370,6 @@ export default function PrivateLayout({
           sx={{
             flexGrow: 1,
             alignSelf: 'center',
-            p: 3,
             maxWidth: '1150px',
             flexDirection: 'column',
             display: 'flex',
