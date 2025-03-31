@@ -18,10 +18,11 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ScheduleList from './schedules';
 import { useBarbershop } from '../../hooks/barbershop';
 import { toast } from 'react-toastify';
+import { useBarbershopServices } from '../../hooks/service';
 
 export default function CustomerAppointment() {
   const { barbershop } = useBarbershop();
-
+  const { services } = useBarbershopServices();
   const [form, setForm] = useState({
     barberId: '',
     barbershopId: barbershop?.id,
@@ -31,7 +32,6 @@ export default function CustomerAppointment() {
   });
   const [barbers, setBarbers] = useState([]);
   const [schedules, setSchedules] = useState([]);
-  const [services, setServices] = useState([]);
 
   useEffect(() => {
     if (barbershop?.id) {
@@ -45,10 +45,6 @@ export default function CustomerAppointment() {
           }));
         }
       });
-
-      api
-        .get(`/services/barbershop/${barbershop?.id}`)
-        .then(({ data }) => setServices(data));
     }
   }, [barbershop?.id]);
 

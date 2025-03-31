@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import api from '../services/api';
 import { useBarbershop } from './barbershop';
+import { useAuth } from './auth';
 
 interface Service {
   id: string;
@@ -31,17 +32,20 @@ export const BarbershopServicesProvider = ({
   children: ReactNode;
 }) => {
   const { barbershop } = useBarbershop();
+  const { isAuthenticated } = useAuth();
   const [services, setServices] = useState<Service[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchServices() {
-      if (!barbershop?.id) return;
+      if (!barbershop?.id || !isAuthenticated) return;
 
       setIsLoading(true);
 
       try {
-        const response = await api.get(`/services/barbershop/${barbershop.id}`);
+        const response = await api.get(
+          `/services/barbershop/${barbershop?.id}`
+        );
         setServices(response.data);
       } catch (error) {
         console.error('Erro ao buscar serviços da barbearia:', error);
@@ -51,7 +55,7 @@ export const BarbershopServicesProvider = ({
     }
 
     fetchServices();
-  }, [barbershop?.id]);
+  }, [barbershop?.id, isAuthenticated]);
 
   return (
     <BarbershopServicesContext.Provider value={{ services, isLoading }}>

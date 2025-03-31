@@ -106,7 +106,29 @@ export default function CardDialog({
     refreshCards();
     onClose();
   };
+  const formatExpiry = (value: string) => {
+    let numericValue = value.replace(/\D/g, '').slice(0, 4);
 
+    if (numericValue.length >= 1) {
+      const month = numericValue.slice(0, 2);
+
+      if (month.length === 2) {
+        const monthNum = parseInt(month, 10);
+
+        if (monthNum === 0) {
+          numericValue = '01' + numericValue.slice(2);
+        } else if (monthNum > 12) {
+          numericValue = '12' + numericValue.slice(2);
+        }
+      }
+    }
+
+    if (numericValue.length > 2) {
+      return `${numericValue.slice(0, 2)}/${numericValue.slice(2)}`;
+    }
+
+    return numericValue;
+  };
   const steps = ['Endereço de Cobrança', 'Dados do Cartão'];
 
   return (
@@ -254,7 +276,13 @@ export default function CardDialog({
                 label="Validade (MM/AA)"
                 name="expiry"
                 value={form.expiry}
-                onChange={handleInputChange}
+                onChange={(e) => {
+                  const formatted = formatExpiry(e.target.value);
+                  handleInputChange({
+                    ...e,
+                    target: { ...e.target, name: 'expiry', value: formatted },
+                  });
+                }}
                 onFocus={handleFocus}
                 fullWidth
                 margin="normal"

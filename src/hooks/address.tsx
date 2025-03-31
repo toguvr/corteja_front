@@ -28,7 +28,7 @@ export const UserAddressProvider = ({ children }: { children: ReactNode }) => {
   async function fetchUserAddresses() {
     setIsLoading(true);
     try {
-      const savedAddresses = localStorage.getItem(key.userAddresses);
+      const savedAddresses = localStorage.getItem(key.userAddresses + user?.id);
 
       if (savedAddresses) {
         const parsedAddresses: AddressDto = JSON.parse(savedAddresses);
@@ -39,7 +39,10 @@ export const UserAddressProvider = ({ children }: { children: ReactNode }) => {
 
       const response = await api.get('/customers/address');
       setAddresses(response.data);
-      localStorage.setItem(key.userAddresses, JSON.stringify(response.data));
+      localStorage.setItem(
+        key.userAddresses + user?.id,
+        JSON.stringify(response.data)
+      );
     } catch (error) {
       console.error('Erro ao buscar os endereços do usuário:', error);
     } finally {

@@ -79,9 +79,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = useCallback(() => {
-    localStorage.removeItem(key.refreshToken);
-    localStorage.removeItem(key.token);
-    localStorage.removeItem(key.user);
+    const slug = localStorage.getItem(key.slug);
+    localStorage.clear();
+    localStorage.setItem(key.slug, slug!!);
 
     setData({} as AuthState);
   }, []);

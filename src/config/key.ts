@@ -6,4 +6,5 @@ export const key = {
   slug: '@corteja.slug',
   userCards: '@corteja.userCards',
   userAddresses: '@corteja.userAddresses',
+  services: '@corteja.services',
 };

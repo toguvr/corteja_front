@@ -28,7 +28,7 @@ export const UserCardsProvider = ({ children }: { children: ReactNode }) => {
   async function fetchUserCards() {
     setIsLoading(true);
     try {
-      const savedCards = localStorage.getItem(key.userCards);
+      const savedCards = localStorage.getItem(key.userCards + user?.id);
 
       if (savedCards) {
         const parsedCards: UserCardDto[] = JSON.parse(savedCards);
@@ -39,7 +39,10 @@ export const UserCardsProvider = ({ children }: { children: ReactNode }) => {
 
       const response = await api.get('/customers/card');
       setCards(response.data);
-      localStorage.setItem(key.userCards, JSON.stringify(response.data));
+      localStorage.setItem(
+        key.userCards + user?.id,
+        JSON.stringify(response.data)
+      );
     } catch (error) {
       console.error('Erro ao buscar os cards do usuário:', error);
     } finally {
