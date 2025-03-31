@@ -49,14 +49,17 @@ export default function CustomerAppointment() {
       });
     }
   }, [barbershop?.id]);
+  const getSchedules = async () => {
+    setLoading(true);
 
+    api
+      .get(`/schedules/barbershop/${barbershop?.id}/barber/${form?.barberId}`)
+      .then(({ data }) => setSchedules(data))
+      .finally(() => setLoading(false));
+  };
   useEffect(() => {
     if (form?.barberId && barbershop?.id) {
-      setLoading(true);
-      api
-        .get(`/schedules/barbershop/${barbershop?.id}/barber/${form?.barberId}`)
-        .then(({ data }) => setSchedules(data))
-        .finally(() => setLoading(false));
+      getSchedules();
     }
   }, [barbershop?.id, form?.barberId]);
 
@@ -71,6 +74,7 @@ export default function CustomerAppointment() {
     setLoading(true);
     try {
       await api.post('/appointments', form);
+      getSchedules();
       toast.success('Agendamento criado com sucesso!');
     } catch (err) {
       if (err?.response) {
