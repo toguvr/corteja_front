@@ -39,10 +39,10 @@ export const UserCardsProvider = ({ children }: { children: ReactNode }) => {
 
       const response = await api.get('/customers/card');
       setCards(response.data);
-      localStorage.setItem(
-        key.userCards + user?.id,
-        JSON.stringify(response.data)
-      );
+      // localStorage.setItem(
+      //   key.userCards + user?.id,
+      //   JSON.stringify(response.data)
+      // );
     } catch (error) {
       console.error('Erro ao buscar os cards do usuário:', error);
     } finally {

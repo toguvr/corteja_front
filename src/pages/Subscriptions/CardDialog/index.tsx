@@ -36,6 +36,7 @@ export default function CardDialog({
   const { address } = useUserAddresses();
   const [activeStep, setActiveStep] = useState(0);
   const [cepBuscado, setCepBuscado] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     number: '',
@@ -94,17 +95,23 @@ export default function CardDialog({
   };
 
   const createCard = async () => {
-    await api.post('/customers/card', {
-      ...form,
-      number: form.number.replace(/\s/g, ''),
-      holder_name: form.name,
-      exp_month: form.expiry.split('/')[0],
-      exp_year: form.expiry.split('/')[1],
-      cvv: form.cvc,
-      holder_document: user.document,
-    });
-    refreshCards();
-    onClose();
+    setLoading(true);
+    try {
+      await api.post('/customers/card', {
+        ...form,
+        number: form.number.replace(/\s/g, ''),
+        holder_name: form.name,
+        exp_month: form.expiry.split('/')[0],
+        exp_year: form.expiry.split('/')[1],
+        cvv: form.cvc,
+        holder_document: user.document,
+      });
+      refreshCards();
+      onClose();
+    } catch (e) {
+    } finally {
+      setLoading(false);
+    }
   };
   const formatExpiry = (value: string) => {
     let numericValue = value.replace(/\D/g, '').slice(0, 4);
@@ -308,7 +315,7 @@ export default function CardDialog({
           </Button>
         )}
         {activeStep === 1 && (
-          <Button variant="contained" onClick={createCard}>
+          <Button variant="contained" loading={loading} onClick={createCard}>
             Cadastrar Cartão
           </Button>
         )}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Box,
   Button,
+  CircularProgress,
   Container,
   Grid,
   IconButton,
@@ -32,6 +33,7 @@ export default function CustomerAppointment() {
   });
   const [barbers, setBarbers] = useState([]);
   const [schedules, setSchedules] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (barbershop?.id) {
@@ -50,9 +52,11 @@ export default function CustomerAppointment() {
 
   useEffect(() => {
     if (form?.barberId && barbershop?.id) {
+      setLoading(true);
       api
         .get(`/schedules/barbershop/${barbershop?.id}/barber/${form?.barberId}`)
-        .then(({ data }) => setSchedules(data));
+        .then(({ data }) => setSchedules(data))
+        .finally(() => setLoading(false));
     }
   }, [barbershop?.id, form?.barberId]);
 
@@ -64,6 +68,7 @@ export default function CustomerAppointment() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       await api.post('/appointments', form);
       toast.success('Agendamento criado com sucesso!');
@@ -73,6 +78,8 @@ export default function CustomerAppointment() {
           err?.response?.data?.message || 'Erro ao fazer login'
         );
       }
+    } finally {
+      setLoading(false);
     }
   };
   const handleSelectSchedule = (schedule) => {
@@ -263,7 +270,11 @@ export default function CustomerAppointment() {
             })}
           </Grid>
         </Box>
-
+        {loading && (
+          <Box display="flex" justifyContent="center" py={4}>
+            <CircularProgress />
+          </Box>
+        )}
         <ScheduleList
           schedules={schedules}
           selectedDate={selectedDate}
@@ -286,6 +297,7 @@ export default function CustomerAppointment() {
               color="primary"
               onClick={handleSubmit}
               fullWidth
+              loading={loading}
               disabled={
                 !form.barberId ||
                 !form.serviceId ||

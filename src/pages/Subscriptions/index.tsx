@@ -191,7 +191,7 @@ export default function Assinaturas() {
                   </Grid>
                 ))
               ) : (
-                <Typography variant="body2" color="text.secondary">
+                <Typography gutterBottom mt={2}>
                   Você ainda não tem nenhuma assinatura.
                 </Typography>
               )}
