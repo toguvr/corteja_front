@@ -47,8 +47,7 @@ export default function PaymentStatement() {
               <TableRow>
                 <TableCell>Data</TableCell>
                 <TableCell>Local</TableCell>
-                <TableCell>Serviço</TableCell>
-                <TableCell>Profissional</TableCell>
+                <TableCell>Agendamento</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell align="right">Valor (R$)</TableCell>
               </TableRow>
@@ -68,11 +67,10 @@ export default function PaymentStatement() {
                 payments.map((p) => (
                   <TableRow key={p.id}>
                     <TableCell>
-                      {new Date(p.paymentDate).toLocaleDateString()}
+                      {new Date(p?.paymentDate).toLocaleDateString()}
                     </TableCell>
                     <TableCell>{p.barbershop?.name || '-'}</TableCell>
-                    <TableCell>{p.service?.name || '-'}</TableCell>
-                    <TableCell>{p.barber?.name || '-'}</TableCell>
+                    <TableCell>{p.type || '-'}</TableCell>
                     <TableCell>
                       <Chip
                         label={p.status}

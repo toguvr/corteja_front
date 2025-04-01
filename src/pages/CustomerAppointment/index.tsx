@@ -20,9 +20,11 @@ import ScheduleList from './schedules';
 import { useBarbershop } from '../../hooks/barbershop';
 import { toast } from 'react-toastify';
 import { useBarbershopServices } from '../../hooks/service';
+import { useBalance } from '../../hooks/balance';
 
 export default function CustomerAppointment() {
   const { barbershop } = useBarbershop();
+  const { fetchBalance } = useBalance();
   const { services } = useBarbershopServices();
   const [form, setForm] = useState({
     barberId: '',
@@ -75,6 +77,7 @@ export default function CustomerAppointment() {
     try {
       await api.post('/appointments', form);
       getSchedules();
+      fetchBalance();
       toast.success('Agendamento criado com sucesso!');
     } catch (err) {
       if (err?.response) {

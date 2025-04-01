@@ -16,6 +16,7 @@ import ScheduleDialog from './DialogSubscription';
 import { useBarbershop } from '../../hooks/barbershop';
 import { useUserCards } from '../../hooks/cards';
 import CardDialog from './CardDialog';
+import { SubscriptionDto } from '../../dtos';
 
 interface Subscription {
   id: string;
@@ -40,7 +41,7 @@ interface Plan {
 export default function Assinaturas() {
   const { barbershop } = useBarbershop();
   const { cards } = useUserCards();
-  const [assinaturas, setAssinaturas] = useState<Subscription[]>([]);
+  const [assinaturas, setAssinaturas] = useState<SubscriptionDto[]>([]);
   const [planos, setPlanos] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -51,7 +52,15 @@ export default function Assinaturas() {
   const [selectedCardId, setSelectedCardId] = useState(cards[0]?.id);
   const [barbers, setBarbers] = useState([]);
   const [openCardDialog, setOpenCardDialog] = useState(false);
-
+  const weekDays = [
+    'Domingo',
+    'Segunda',
+    'Terça',
+    'Quarta',
+    'Quinta',
+    'Sexta',
+    'Sábado',
+  ];
   useEffect(() => {
     if (barbershop?.id) {
       api.get(`/barbers/barbershop/${barbershop?.id}`).then(({ data }) => {
@@ -165,17 +174,16 @@ export default function Assinaturas() {
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                           Valor:{' '}
-                          {(sub.plan.price / 100).toLocaleString('pt-BR', {
+                          {(sub?.plan?.price / 100).toLocaleString('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',
                           })}{' '}
                           / ciclo
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Próxima cobrança:{' '}
-                          {new Date(sub.next_billing_at).toLocaleDateString(
-                            'pt-BR'
-                          )}
+                          Dia : {weekDays[sub.schedule.weekDay]}
+                          {', '}
+                          {sub.schedule.time}
                         </Typography>
                       </CardContent>
                       <CardActions>

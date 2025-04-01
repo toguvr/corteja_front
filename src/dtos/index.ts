@@ -105,6 +105,7 @@ export interface PaymentDto {
   status?: string;
   transactionId?: string;
   paymentMethod?: string;
+  type?: string;
   fee?: number;
   amount?: number;
   installments?: number;

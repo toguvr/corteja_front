@@ -56,10 +56,13 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
   confirmarAssinatura,
 }) => {
   const [activeStep, setActiveStep] = useState(0);
+  const [loading, setLoading] = useState(false);
   const { barbershop } = useBarbershop();
-  const handleNext = () => {
+  const handleNext = async () => {
     if (activeStep === steps.length - 1) {
-      confirmarAssinatura();
+      setLoading(true);
+      await confirmarAssinatura();
+      setLoading(false);
       onClose();
     } else {
       setActiveStep((prev) => prev + 1);
@@ -189,6 +192,7 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
               variant="contained"
               fullWidth
               color="secondary"
+              loading={loading}
               sx={{ py: 1.5 }}
               onClick={confirmarAssinatura}
             >
@@ -219,7 +223,7 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
           onClick={handleNext}
           disabled={activeStep === 0 && !selectedScheduleId}
         >
-          {activeStep === steps.length - 1 ? 'Finalizar' : 'Próximo'}
+          {activeStep !== steps.length - 1 && 'Próximo'}
         </Button>
       </DialogActions>
     </Dialog>
