@@ -9,6 +9,7 @@ import { PrivateRoute } from './Route';
 import CustomerAppointment from '../pages/CustomerAppointment';
 import Schedules from '../pages/Schedules';
 import Assinaturas from '../pages/Subscriptions';
+import PaymentStatement from '../pages/PaymentStatement';
 import EditCustomerProfile from '../pages/Profile';
 
 const AppRouter = () => {
@@ -29,6 +30,10 @@ const AppRouter = () => {
       <Route
         path="/perfil"
         element={<PrivateRoute element={<EditCustomerProfile />} />}
+      />
+      <Route
+        path="/extrato"
+        element={<PrivateRoute element={<PaymentStatement />} />}
       />
 
       <Route path="*" element={<h1>Página não encontrada</h1>} />

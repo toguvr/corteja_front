@@ -13,12 +13,7 @@ import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 import { CustomerDto } from '../../dtos';
 
-interface Props {
-  customer: CustomerDto;
-  onSave: (customer: Partial<CustomerDto>) => void;
-}
-
-const EditCustomerProfile: React.FC<Props> = () => {
+const EditCustomerProfile: React.FC = () => {
   const { user: customer } = useAuth();
   const [formData, setFormData] = useState<Partial<CustomerDto>>(customer);
 

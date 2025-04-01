@@ -115,6 +115,10 @@ export interface PaymentDto {
   barberId?: string;
   createdAt: Date;
   updatedAt: Date;
+  customer: CustomerDto;
+  barbershop: BarbershopDto;
+  barber: BarberDto;
+  service: ServiceDto;
 }
 
 export interface BalanceDto {

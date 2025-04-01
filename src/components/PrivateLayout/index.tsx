@@ -28,6 +28,7 @@ import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 const drawerWidth = 240;
 const menuItems = [
   { label: 'Agendar', icon: <CalendarTodayIcon />, page: '/agendar' },
@@ -35,12 +36,18 @@ const menuItems = [
   // { label: 'Fidelidade', icon: <LoyaltyIcon />, page: '/fidelidade' },
 ];
 const menuItemsBottom = [
-  { label: 'Perfil', icon: <PersonIcon />, page: '/perfil' },
   {
     label: 'Agendamentos',
     icon: <EventAvailableIcon />,
     page: '/agendamentos',
   },
+  {
+    label: 'Extrato',
+    icon: <ReceiptLongIcon />,
+    page: '/extrato',
+  },
+
+  { label: 'Perfil', icon: <PersonIcon />, page: '/perfil' },
   { label: 'Sair', icon: <LogoutIcon /> },
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
