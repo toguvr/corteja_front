@@ -9,6 +9,11 @@ import {
   Button,
   Grid,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import api from '../../services/api';
 import PrivateLayout from '../../components/PrivateLayout';
@@ -17,6 +22,7 @@ import { useBarbershop } from '../../hooks/barbershop';
 import { useUserCards } from '../../hooks/cards';
 import CardDialog from './CardDialog';
 import { SubscriptionDto } from '../../dtos';
+import { toast } from 'react-toastify';
 
 interface Subscription {
   id: string;
@@ -52,6 +58,11 @@ export default function Assinaturas() {
   const [selectedCardId, setSelectedCardId] = useState(cards[0]?.id);
   const [barbers, setBarbers] = useState([]);
   const [openCardDialog, setOpenCardDialog] = useState(false);
+  const [cancelingId, setCancelingId] = useState<string | null>(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<
+    string | null
+  >(null);
   const weekDays = [
     'Domingo',
     'Segunda',
@@ -61,6 +72,15 @@ export default function Assinaturas() {
     'Sexta',
     'Sábado',
   ];
+  const openCancelDialog = (id: string) => {
+    setSelectedSubscriptionId(id);
+    setConfirmDialogOpen(true);
+  };
+
+  const closeCancelDialog = () => {
+    setConfirmDialogOpen(false);
+    setSelectedSubscriptionId(null);
+  };
   useEffect(() => {
     if (barbershop?.id) {
       api.get(`/barbers/barbershop/${barbershop?.id}`).then(({ data }) => {
@@ -88,7 +108,20 @@ export default function Assinaturas() {
       console.error('Erro ao carregar assinaturas', err);
     }
   };
-
+  const cancelarAssinatura = async () => {
+    if (!selectedSubscriptionId) return;
+    try {
+      setCancelingId(selectedSubscriptionId);
+      await api.delete(`/subscriptions/${selectedSubscriptionId}`);
+      toast.success('Assinatura cancelada com sucesso');
+      loadAssinaturas();
+    } catch (err) {
+      toast.error('Erro ao cancelar assinatura');
+    } finally {
+      setCancelingId(null);
+      closeCancelDialog();
+    }
+  };
   const loadPlanos = async () => {
     try {
       const { data } = await api.get(`/plans/${barbershop?.id}`);
@@ -190,7 +223,7 @@ export default function Assinaturas() {
                         <Button
                           size="small"
                           color="error"
-                          onClick={() => alert(`Cancelar ${sub.id}`)}
+                          onClick={() => openCancelDialog(sub.id)}
                         >
                           Cancelar
                         </Button>
@@ -262,6 +295,33 @@ export default function Assinaturas() {
         handleOpenCardDialog={() => setOpenCardDialog(true)}
         confirmarAssinatura={confirmarAssinatura}
       />
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={closeCancelDialog}
+        aria-labelledby="cancel-dialog-title"
+        aria-describedby="cancel-dialog-description"
+      >
+        <DialogTitle id="cancel-dialog-title">Cancelar assinatura</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="cancel-dialog-description">
+            Tem certeza que deseja cancelar esta assinatura? Essa ação não pode
+            ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeCancelDialog} disabled={!!cancelingId}>
+            Voltar
+          </Button>
+          <Button
+            onClick={cancelarAssinatura}
+            color="error"
+            variant="contained"
+            disabled={!!cancelingId}
+          >
+            {cancelingId ? 'Cancelando...' : 'Confirmar cancelamento'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </PrivateLayout>
   );
 }

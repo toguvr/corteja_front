@@ -11,6 +11,7 @@ import Schedules from '../pages/Schedules';
 import Assinaturas from '../pages/Subscriptions';
 import PaymentStatement from '../pages/PaymentStatement';
 import EditCustomerProfile from '../pages/Profile';
+import SignInBarbershop from '../pages/SigninBarbershop';
 
 const AppRouter = () => {
   return (
@@ -39,6 +40,7 @@ const AppRouter = () => {
       <Route path="*" element={<h1>Página não encontrada</h1>} />
 
       <Route path="/" element={<SignIn />} />
+      <Route path="/admin" element={<SignInBarbershop />} />
       <Route path="/criar-conta" element={<CreateAccount />} />
       <Route path="/esqueci-senha" element={<ForgotPassword />} />
       <Route path="/redefinir-senha" element={<ResetPassword />} />

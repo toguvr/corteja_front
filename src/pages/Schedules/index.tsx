@@ -7,6 +7,12 @@ import {
   IconButton,
   Stack,
   Typography,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SyncIcon from '@mui/icons-material/Sync';
@@ -14,6 +20,7 @@ import PrivateLayout from '../../components/PrivateLayout';
 import api from '../../services/api';
 import { useEffect, useState } from 'react';
 import { AppointmentDto, BarberDto, SubscriptionDto } from '../../dtos';
+import { useBalance } from '../../hooks/balance';
 
 const weekDays = [
   'Domingo',
@@ -38,13 +45,22 @@ const formatTime = (iso: string) => {
   const d = new Date(iso);
   return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 };
+
 export default function Schedules() {
+  const { fetchBalance } = useBalance();
   const [nexts, setNexts] = useState([]);
   const [pasts, setPast] = useState([]);
+  const [subscriptions, setSubscriptions] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [subscriptions, setSubscriptions] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<
+    string | null
+  >(null);
+  const [cancelingAppointmentId, setCancelingAppointmentId] = useState<
+    string | null
+  >(null);
   const fetchPastAppointments = async (pageToLoad = 1) => {
     const { data } = await api.get(`/appointments/past`, {
       params: {
@@ -62,14 +78,54 @@ export default function Schedules() {
     setHasMore(pageToLoad < data?.meta?.totalPages);
     setPage(pageToLoad);
   };
-  useEffect(() => {
-    api.get(`/appointments/next`).then(({ data }) => {
-      setNexts(data);
-    });
-    fetchPastAppointments(1);
-    api.get(`/subscriptions/mine`).then(({ data }) => setSubscriptions(data));
-  }, []);
 
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        const [nextData, subData] = await Promise.all([
+          api.get(`/appointments/next`),
+          api.get(`/subscriptions/mine`),
+        ]);
+
+        setNexts(nextData.data);
+        setSubscriptions(subData.data);
+        await fetchPastAppointments(1);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+  const openCancelDialog = (id: string) => {
+    setSelectedAppointmentId(id);
+    setCancelDialogOpen(true);
+  };
+
+  const closeCancelDialog = () => {
+    setCancelDialogOpen(false);
+    setSelectedAppointmentId(null);
+  };
+
+  const cancelAppointment = async () => {
+    if (!selectedAppointmentId) return;
+
+    try {
+      setCancelingAppointmentId(selectedAppointmentId);
+      await api.delete(`/appointments/${selectedAppointmentId}`);
+      fetchBalance();
+      const { data } = await api.get(`/appointments/next`);
+      setNexts(data);
+      closeCancelDialog();
+    } catch (error) {
+      console.error('Erro ao cancelar agendamento:', error);
+    } finally {
+      setCancelingAppointmentId(null);
+    }
+  };
   const ProfessorInfo = ({ barber }: { barber: BarberDto }) => (
     <Stack direction="row" spacing={2} alignItems="center">
       {/* <Avatar src="/avatar.jpg" /> */}
@@ -78,6 +134,7 @@ export default function Schedules() {
       </Box>
     </Stack>
   );
+
   const SubscriptionInfo = ({
     subscription,
   }: {
@@ -101,9 +158,9 @@ export default function Schedules() {
                 ', ' +
                 subscription?.schedule?.time}
             </Typography>
-            <IconButton>
+            {/* <IconButton>
               <MoreVertIcon />
-            </IconButton>
+            </IconButton> */}
           </Stack>
           <ProfessorInfo barber={subscription?.barber} />
         </CardContent>
@@ -124,9 +181,15 @@ export default function Schedules() {
               {formatDate(appointment?.date)}, {formatTime(appointment?.date)}
             </Typography>
           </Box>
-          <IconButton>
-            <MoreVertIcon />
-          </IconButton>
+          <Stack direction="row" spacing={1}>
+            <Button
+              size="small"
+              color="error"
+              onClick={() => openCancelDialog(appointment.id)}
+            >
+              Cancelar
+            </Button>
+          </Stack>
         </Stack>
         <ProfessorInfo barber={appointment?.barber} />
       </CardContent>
@@ -162,58 +225,99 @@ export default function Schedules() {
         sx={{ alignSelf: 'center', flexDirection: 'column', width: '100%' }}
         p={3}
       >
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Próximos
-        </Typography>
-        {nexts.length ? (
-          nexts.map((next, i) => <AulaCard key={i} {...next} />)
+        {loading ? (
+          <Stack alignItems="center" mt={4}>
+            <CircularProgress />
+            <Typography mt={2}>Carregando dados...</Typography>
+          </Stack>
         ) : (
-          <Typography mt={2} gutterBottom>
-            Nenhum encontrado
-          </Typography>
-        )}
+          <>
+            <Typography variant="h5" fontWeight="bold" gutterBottom>
+              Próximos
+            </Typography>
+            {nexts.length ? (
+              nexts.map((next, i) => <AulaCard key={i} {...next} />)
+            ) : (
+              <Typography mt={2} gutterBottom>
+                Nenhum encontrado
+              </Typography>
+            )}
 
-        <Typography variant="h5" fontWeight="bold" mt={4} gutterBottom>
-          Agendamentos semanais
-        </Typography>
-        {subscriptions.length ? (
-          subscriptions.map((sub) => <SubscriptionInfo subscription={sub} />)
-        ) : (
-          <Typography mt={2} gutterBottom>
-            Nenhum encontrado
-          </Typography>
-        )}
+            <Typography variant="h5" fontWeight="bold" mt={4} gutterBottom>
+              Agendamentos semanais
+            </Typography>
+            {subscriptions.length ? (
+              subscriptions.map((sub) => (
+                <SubscriptionInfo subscription={sub} />
+              ))
+            ) : (
+              <Typography mt={2} gutterBottom>
+                Nenhum encontrado
+              </Typography>
+            )}
 
-        <Typography variant="h5" fontWeight="bold" mt={4} gutterBottom>
-          Anteriores
-        </Typography>
-        {pasts.length ? (
-          pasts.map((aula, i) => (
-            <AulaAnteriorCard
-              key={i}
-              barber={aula?.barber}
-              date={formatDate(aula?.date)} // opcional: função pra formatar
-              time={formatTime(aula?.date)} // idem
-              valor={`R$ ${(aula?.payment?.amount / 100 || 0).toLocaleString(
-                'pt-BR',
-                {
-                  style: 'currency',
-                  currency: 'BRL',
-                }
-              )}`}
-            />
-          ))
-        ) : (
-          <Typography mt={2} gutterBottom>
-            Nenhum encontrado
-          </Typography>
-        )}
-        {hasMore && (
-          <Button onClick={() => fetchPastAppointments(page + 1)}>
-            Mais anteriores
-          </Button>
+            <Typography variant="h5" fontWeight="bold" mt={4} gutterBottom>
+              Anteriores
+            </Typography>
+            {pasts.length ? (
+              pasts.map((aula, i) => (
+                <AulaAnteriorCard
+                  key={i}
+                  barber={aula?.barber}
+                  date={formatDate(aula?.date)}
+                  time={formatTime(aula?.date)}
+                  valor={`R$ ${(
+                    aula?.payment?.amount / 100 || 0
+                  ).toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  })}`}
+                />
+              ))
+            ) : (
+              <Typography mt={2} gutterBottom>
+                Nenhum encontrado
+              </Typography>
+            )}
+            {hasMore && (
+              <Button onClick={() => fetchPastAppointments(page + 1)}>
+                Mais anteriores
+              </Button>
+            )}
+          </>
         )}
       </Box>
+      <Dialog
+        open={cancelDialogOpen}
+        onClose={closeCancelDialog}
+        aria-labelledby="cancel-appointment-dialog-title"
+      >
+        <DialogTitle id="cancel-appointment-dialog-title">
+          Cancelar agendamento
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem certeza que deseja cancelar este agendamento? Isso não poderá
+            ser desfeito.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={closeCancelDialog}
+            disabled={!!cancelingAppointmentId}
+          >
+            Voltar
+          </Button>
+          <Button
+            onClick={cancelAppointment}
+            color="error"
+            variant="contained"
+            disabled={!!cancelingAppointmentId}
+          >
+            {cancelingAppointmentId ? 'Cancelando...' : 'Confirmar'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </PrivateLayout>
   );
 }
