@@ -58,6 +58,8 @@ export default function Assinaturas() {
   const [selectedCardId, setSelectedCardId] = useState(cards[0]?.id);
   const [barbers, setBarbers] = useState([]);
   const [openCardDialog, setOpenCardDialog] = useState(false);
+  const [loadingConfirmSubscription, setLoadingConfirmSubscription] =
+    useState(false);
   const [cancelingId, setCancelingId] = useState<string | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<
@@ -116,7 +118,9 @@ export default function Assinaturas() {
       toast.success('Assinatura cancelada com sucesso');
       loadAssinaturas();
     } catch (err) {
-      toast.error('Erro ao cancelar assinatura');
+      toast.error(
+        err?.response?.data?.message || 'Erro ao cancelar assinatura'
+      );
     } finally {
       setCancelingId(null);
       closeCancelDialog();
@@ -153,6 +157,7 @@ export default function Assinaturas() {
   };
 
   const confirmarAssinatura = async () => {
+    setLoadingConfirmSubscription(true);
     if (!selectedPlan) return;
     try {
       await api.post('/subscriptions', {
@@ -164,7 +169,9 @@ export default function Assinaturas() {
       loadAssinaturas();
       handleCloseModal();
     } catch (err) {
-      alert('Erro ao assinar plano');
+      alert(err?.response?.data?.message || 'Erro ao assinar plano');
+    } finally {
+      setLoadingConfirmSubscription(false);
     }
   };
 
@@ -202,8 +209,22 @@ export default function Assinaturas() {
                     <Card>
                       <CardContent>
                         <Typography variant="h6">{sub.plan_name}</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Status: {sub.active ? 'Ativa' : 'Inativa'}
+                        <Typography
+                          variant="body2"
+                          color={
+                            sub.active
+                              ? 'success'
+                              : sub.canceledAt
+                                ? 'error'
+                                : 'warning'
+                          }
+                        >
+                          Status:{' '}
+                          {sub.active
+                            ? 'Ativa'
+                            : sub.canceledAt
+                              ? 'Cancelada'
+                              : 'Inativa'}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                           Valor:{' '}
@@ -294,6 +315,7 @@ export default function Assinaturas() {
         handleSelectCard={handleSelectCard}
         handleOpenCardDialog={() => setOpenCardDialog(true)}
         confirmarAssinatura={confirmarAssinatura}
+        loadingConfirmSubscription={loadingConfirmSubscription}
       />
       <Dialog
         open={confirmDialogOpen}

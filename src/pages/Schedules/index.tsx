@@ -89,7 +89,7 @@ export default function Schedules() {
         ]);
 
         setNexts(nextData.data);
-        setSubscriptions(subData.data);
+        setSubscriptions(subData.data.filter((s) => s.active));
         await fetchPastAppointments(1);
       } catch (error) {
         console.error(error);

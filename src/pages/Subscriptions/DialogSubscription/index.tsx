@@ -37,6 +37,7 @@ interface ScheduleDialogProps {
   cards: BarberDto[];
   handleSelectCard?: (barber: BarberDto) => void;
   selectedCardId?: string;
+  loadingConfirmSubscription: boolean;
 }
 
 const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
@@ -54,15 +55,15 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
   selectedPlan,
   handleOpenCardDialog,
   confirmarAssinatura,
+  loadingConfirmSubscription,
 }) => {
   const [activeStep, setActiveStep] = useState(0);
-  const [loading, setLoading] = useState(false);
+
   const { barbershop } = useBarbershop();
   const handleNext = async () => {
     if (activeStep === steps.length - 1) {
-      setLoading(true);
-      await confirmarAssinatura();
-      setLoading(false);
+      confirmarAssinatura();
+
       onClose();
     } else {
       setActiveStep((prev) => prev + 1);
@@ -192,7 +193,7 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
               variant="contained"
               fullWidth
               color="secondary"
-              loading={loading}
+              loading={loadingConfirmSubscription}
               sx={{ py: 1.5 }}
               onClick={confirmarAssinatura}
             >
@@ -218,13 +219,15 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
       <DialogActions>
         {activeStep === 0 && <Button onClick={onClose}>Cancelar</Button>}
         {activeStep > 0 && <Button onClick={handleBack}>Voltar</Button>}
-        <Button
-          variant="contained"
-          onClick={handleNext}
-          disabled={activeStep === 0 && !selectedScheduleId}
-        >
-          {activeStep !== steps.length - 1 && 'Próximo'}
-        </Button>
+        {activeStep !== steps.length - 1 && (
+          <Button
+            variant="contained"
+            onClick={handleNext}
+            disabled={activeStep === 0 && !selectedScheduleId}
+          >
+            'Próximo'
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
