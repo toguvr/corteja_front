@@ -48,7 +48,7 @@ const SignInBarbershop = () => {
       await signIn({
         ...values,
         role: 'admin',
-        page: '/dashboard',
+        page: '/barbearia/dashboard',
       });
     } catch (err: any) {
       if (err instanceof Yup.ValidationError) {

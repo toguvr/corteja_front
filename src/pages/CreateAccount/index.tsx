@@ -1,262 +1,325 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  TextField,
-  InputAdornment,
-  Typography,
-  Stack,
+  Box,
   Button,
+  Container,
+  Grid,
+  IconButton,
+  MenuItem,
+  Paper,
+  TextField,
+  Typography,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
-import PersonSharp from '@mui/icons-material/PersonSharp';
-import EmailSharpIcon from '@mui/icons-material/EmailSharp';
-import PhoneSharpIcon from '@mui/icons-material/PhoneSharp';
-import LockSharpIcon from '@mui/icons-material/LockSharp';
-import * as Yup from 'yup';
-import { toast } from 'react-toastify';
-import PublicLayout from '../../components/PublicLayout';
-import InputMask from 'react-input-mask';
-import { LoginTitle, LoginEmail, LoginPassword, RegisterLink } from './styles';
-import { theme } from '../../theme';
+import { Delete, Add } from '@mui/icons-material';
+import dayjs from 'dayjs';
+import { useBarbershop } from '../../hooks/barbershop';
 import api from '../../services/api';
-import { useAuth } from '../../hooks/auth';
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import { isValidCellphone, isValidCPF } from '../../utils/validators';
-import { key } from '../../config/key';
-export const CreateAccount = () => {
-  const { signIn } = useAuth();
-  const [errors, setErrors] = useState<{ [key: string]: any }>({});
-  const [loading, setLoading] = useState(false);
-  const [values, setValues] = useState({
-    name: '',
-    email: '',
-    password: '',
-    phone: '',
-    document: '',
-    confirmPassword: '',
-  });
-  const handleChange = (e) => {
-    // Remove todos os caracteres não numéricos antes de salvar
-    const rawValue = e.target.value.replace(/\D/g, '');
-    setValues({ ...values, phone: rawValue });
-  };
-  async function handleCreateAccount() {
-    setErrors({});
-    setLoading(true);
-    try {
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome obrigatório'),
-        document: Yup.string()
-          .test('is-valid-cpf', 'CPF inválido', (value) =>
-            value ? isValidCPF(value) : false
-          )
-          .required('CPF obrigatório'),
-        phone: Yup.string()
-          .test('is-valid-cellphone', 'Celular inválido', (value) =>
-            value ? isValidCellphone(value) : false
-          )
-          .required('Celular obrigatório'),
-        email: Yup.string()
-          .email('Email inválido')
-          .required('Email obrigatório'),
-        password: Yup.string()
-          .min(6, 'Mínimo de 6 caracteres')
-          .required('Senha obrigatória'),
-      });
 
-      await schema.validate(values, { abortEarly: false });
-      await api.post('/customers', {
-        ...values,
-        phone: values.phone.replace(/\D/g, ''),
-        document: values.document.replace(/\D/g, ''),
-      });
+const weekDays = [
+  { label: 'Segunda-feira', value: '1' },
+  { label: 'Terça-feira', value: '2' },
+  { label: 'Quarta-feira', value: '3' },
+  { label: 'Quinta-feira', value: '4' },
+  { label: 'Sexta-feira', value: '5' },
+  { label: 'Sábado', value: '6' },
+  { label: 'Domingo', value: '0' },
+];
 
-      toast.success('Cadastrado com sucesso!');
-      const slug = localStorage.getItem(key.slug);
-      await signIn({
-        email: values.email,
-        password: values.password,
-        role: 'customer',
-        page: '/agendar/' + slug,
-      });
-    } catch (err: any) {
-      if (err instanceof Yup.ValidationError) {
-        const validationErrors: { [key: string]: string } = {};
-        err.inner.forEach((error) => {
-          validationErrors[error.path as string] = error.message;
-        });
-        setErrors(validationErrors);
-        return;
-      }
-      toast.error(
-        err?.response?.data?.message || 'Erro ao criar conta. Tente novamente.'
-      );
-    } finally {
-      setLoading(false);
-    }
+function formatTime(value) {
+  let digits = value.replace(/\D/g, '');
+  if (digits.length >= 3) {
+    digits = digits.slice(0, 4);
+    return `${digits.slice(0, 2)}:${digits.slice(2, 4)}`;
   }
+  return digits;
+}
+
+function isValidTimeFormat(value) {
+  const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+  return timeRegex.test(value);
+}
+
+export default function ScheduleManagement() {
+  const { barbershop } = useBarbershop();
+  const [schedules, setSchedules] = useState([]);
+  const [barbers, setBarbers] = useState([]);
+  const [selectedBarberId, setSelectedBarberId] = useState('');
+  const [form, setForm] = useState({ weekDay: '', time: '', limit: 1 });
+  const [bulkForm, setBulkForm] = useState({
+    weekDay: '',
+    start: '',
+    end: '',
+    interval: 15,
+  });
+  const [timeErrors, setTimeErrors] = useState({
+    time: '',
+    start: '',
+    end: '',
+  });
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  useEffect(() => {
+    if (barbershop?.id) {
+      fetchBarbers();
+    }
+  }, [barbershop]);
+
+  useEffect(() => {
+    if (barbershop?.id && selectedBarberId) {
+      fetchSchedules();
+    }
+  }, [barbershop, selectedBarberId]);
+
+  const fetchBarbers = async () => {
+    const { data } = await api.get(`/barbers/barbershop/${barbershop?.id}`);
+    setBarbers(data);
+  };
+
+  const fetchSchedules = async () => {
+    const { data } = await api.get(
+      `/schedules/barbershop/${barbershop?.id}/barber/${selectedBarberId}`
+    );
+    setSchedules(data);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'time') {
+      const formatted = formatTime(value);
+      setForm((prev) => ({ ...prev, [name]: formatted }));
+      setTimeErrors((prev) => ({
+        ...prev,
+        time: isValidTimeFormat(formatted) ? '' : 'Formato inválido',
+      }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleBulkChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'start' || name === 'end') {
+      const formatted = formatTime(value);
+      setBulkForm((prev) => ({ ...prev, [name]: formatted }));
+      setTimeErrors((prev) => ({
+        ...prev,
+        [name]: isValidTimeFormat(formatted) ? '' : 'Formato inválido',
+      }));
+    } else {
+      setBulkForm((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleAddSchedule = async () => {
+    if (!isValidTimeFormat(form.time)) return;
+    const payload = [
+      {
+        ...form,
+        barbershopId: barbershop?.id,
+        barberId: selectedBarberId,
+      },
+    ];
+    await api.post('/schedules', payload);
+    fetchSchedules();
+    setForm({ weekDay: '', time: '', limit: 1 });
+  };
+
+  const handleDelete = async (id) => {
+    await api.delete(`/schedules/${id}`);
+    fetchSchedules();
+  };
+
+  const generateBulkSchedules = () => {
+    const { weekDay, start, end, interval } = bulkForm;
+    if (!weekDay || !start || !end || !interval) return [];
+    if (!isValidTimeFormat(start) || !isValidTimeFormat(end)) return [];
+
+    const result = [];
+    let current = dayjs(`2020-01-01T${start}`);
+    const endTime = dayjs(`2020-01-01T${end}`);
+
+    while (current.isBefore(endTime)) {
+      result.push({
+        weekDay,
+        time: current.format('HH:mm'),
+        limit: 1,
+        barbershopId: barbershop.id,
+        barberId: selectedBarberId,
+      });
+      current = current.add(interval, 'minute');
+    }
+
+    return result;
+  };
+
+  const handleSaveBulk = async () => {
+    const bulk = generateBulkSchedules();
+    if (bulk.length) {
+      await api.post('/schedules', bulk);
+      fetchSchedules();
+      setBulkForm({ weekDay: '', start: '', end: '', interval: 15 });
+    }
+  };
 
   return (
-    <PublicLayout>
-      <LoginTitle>Criar uma conta</LoginTitle>
-      <Typography variant="body2" textAlign="center">
-        Por favor, insira seus dados para se cadastrar
+    <Container maxWidth="md">
+      <Typography variant="h5" mt={4} mb={2}>
+        Horários da Barbearia
       </Typography>
-      <Stack spacing={2} sx={{ mt: 2 }}>
-        <TextField
-          label="Nome"
-          id="name"
-          color="primary"
-          size="small"
-          fullWidth
-          onChange={(e) => setValues({ ...values, name: e.target.value })}
-          value={values.name}
-          error={!!errors.name}
-          helperText={errors.name}
-          variant="outlined"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <PersonSharp
-                  sx={{ fontSize: 18, color: theme.palette.primary.main }}
-                />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          label="Celular"
-          fullWidth
-          margin="normal"
-          size="small"
-          error={!!errors.phone}
-          helperText={errors.phone}
-          value={values.phone}
-          onChange={(e) => {
-            let onlyNumbers = e.target.value.replace(/\D/g, '');
-            if (onlyNumbers.length > 10) {
-              onlyNumbers = onlyNumbers.replace(
-                /^(\d{2})(\d{5})(\d{4}).*/,
-                '($1) $2-$3'
-              );
-            } else if (onlyNumbers.length > 5) {
-              onlyNumbers = onlyNumbers.replace(
-                /^(\d{2})(\d{4})(\d{0,4})/,
-                '($1) $2-$3'
-              );
-            } else if (onlyNumbers.length > 2) {
-              onlyNumbers = onlyNumbers.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
-            }
-            setValues({ ...values, phone: onlyNumbers });
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <PhoneSharpIcon sx={{ fontSize: 18, color: 'primary.main' }} />
-              </InputAdornment>
-            ),
-          }}
-          inputProps={{ maxLength: 15 }}
-        />
-        <TextField
-          label="CPF"
-          variant="outlined"
-          fullWidth
-          size="small"
-          margin="normal"
-          autoComplete="off"
-          error={!!errors.document}
-          helperText={errors.document}
-          value={values.document}
-          onChange={(e) => {
-            let onlyNumbers = e.target.value.replace(/\D/g, '');
-            if (onlyNumbers.length > 9) {
-              onlyNumbers = onlyNumbers.replace(
-                /^(\d{3})(\d{3})(\d{3})(\d{0,2})/,
-                '$1.$2.$3-$4'
-              );
-            } else if (onlyNumbers.length > 6) {
-              onlyNumbers = onlyNumbers.replace(
-                /^(\d{3})(\d{3})(\d{0,3})/,
-                '$1.$2.$3'
-              );
-            } else if (onlyNumbers.length > 3) {
-              onlyNumbers = onlyNumbers.replace(/^(\d{3})(\d{0,3})/, '$1.$2');
-            }
-            setValues({ ...values, document: onlyNumbers });
-          }}
-          inputProps={{ maxLength: 14 }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <AssignmentIndIcon
-                  sx={{ fontSize: 18, color: theme.palette.primary.main }}
-                />
-              </InputAdornment>
-            ),
-          }}
-        />
 
-        <TextField
-          id="email"
-          label="Email"
-          type="email"
-          size="small"
-          fullWidth
-          onChange={(e) => setValues({ ...values, email: e.target.value })}
-          value={values.email}
-          error={!!errors.email}
-          helperText={errors.email}
-          variant="outlined"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <EmailSharpIcon
-                  sx={{ fontSize: 18, color: theme.palette.primary.main }}
-                />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        <TextField
-          label="Senha"
-          id="password"
-          size="small"
-          fullWidth
-          type="password"
-          onChange={(e) => setValues({ ...values, password: e.target.value })}
-          value={values.password}
-          error={!!errors.password}
-          helperText={errors.password}
-          variant="outlined"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <LockSharpIcon
-                  sx={{ fontSize: 18, color: theme.palette.primary.main }}
-                />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Stack>
-      <Button
-        variant="contained"
+      <TextField
+        select
+        label="Profissional"
+        value={selectedBarberId}
+        onChange={(e) => setSelectedBarberId(e.target.value)}
         fullWidth
-        sx={{ mt: 2 }}
-        onClick={handleCreateAccount}
-        loading={loading}
+        sx={{ mb: 4 }}
       >
-        Cadastrar
-      </Button>
+        {barbers.map((barber) => (
+          <MenuItem key={barber.id} value={barber.id}>
+            {barber.name}
+          </MenuItem>
+        ))}
+      </TextField>
 
-      <Typography
-        color="primary"
-        variant="body2"
-        textAlign="center"
-        sx={{ mt: 2 }}
-      >
-        Já possui uma conta? <RegisterLink href="/">Entrar</RegisterLink>
-      </Typography>
-    </PublicLayout>
+      <Grid container spacing={2}>
+        {schedules.map((s) => (
+          <Grid item xs={6} sm={4} key={s.id}>
+            <Paper elevation={2} style={{ padding: 12 }}>
+              <Typography variant="subtitle2">
+                {weekDays.find((d) => d.value === s.weekDay)?.label}
+              </Typography>
+              <Typography>{s.time}</Typography>
+              <Typography fontSize={12}>Limite: {s.limit}</Typography>
+              <IconButton onClick={() => handleDelete(s.id)}>
+                <Delete />
+              </IconButton>
+            </Paper>
+          </Grid>
+        ))}
+      </Grid>
+
+      <Box mt={4}>
+        <Typography variant="h6">Adicionar horário manual</Typography>
+        <Grid container spacing={2} mt={1}>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              select
+              name="weekDay"
+              label="Dia da semana"
+              value={form.weekDay}
+              onChange={handleChange}
+              fullWidth
+            >
+              {weekDays.map((d) => (
+                <MenuItem key={d.value} value={d.value}>
+                  {d.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={6} sm={4}>
+            <TextField
+              name="time"
+              label="Hora (HH:mm)"
+              value={form.time}
+              onChange={handleChange}
+              fullWidth
+              placeholder="00:00"
+              inputProps={{ maxLength: 5 }}
+              error={!!timeErrors.time}
+              helperText={timeErrors.time}
+            />
+          </Grid>
+          <Grid item xs={6} sm={4}>
+            <TextField
+              name="limit"
+              label="Limite"
+              type="number"
+              value={form.limit}
+              onChange={handleChange}
+              fullWidth
+            />
+          </Grid>
+        </Grid>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={handleAddSchedule}
+          sx={{ mt: 2 }}
+        >
+          Adicionar
+        </Button>
+      </Box>
+
+      <Box mt={6}>
+        <Typography variant="h6">Gerar horários automaticamente</Typography>
+        <Grid container spacing={2} mt={1}>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              select
+              name="weekDay"
+              label="Dia da semana"
+              value={bulkForm.weekDay}
+              onChange={handleBulkChange}
+              fullWidth
+            >
+              {weekDays.map((d) => (
+                <MenuItem key={d.value} value={d.value}>
+                  {d.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={4} sm={3}>
+            <TextField
+              name="start"
+              label="Início (HH:mm)"
+              value={bulkForm.start}
+              onChange={handleBulkChange}
+              fullWidth
+              placeholder="00:00"
+              inputProps={{ maxLength: 5 }}
+              error={!!timeErrors.start}
+              helperText={timeErrors.start}
+            />
+          </Grid>
+          <Grid item xs={4} sm={3}>
+            <TextField
+              name="end"
+              label="Fim (HH:mm)"
+              value={bulkForm.end}
+              onChange={handleBulkChange}
+              fullWidth
+              placeholder="00:00"
+              inputProps={{ maxLength: 5 }}
+              error={!!timeErrors.end}
+              helperText={timeErrors.end}
+            />
+          </Grid>
+          <Grid item xs={4} sm={3}>
+            <TextField
+              name="interval"
+              label="Intervalo (min)"
+              type="number"
+              value={bulkForm.interval}
+              onChange={handleBulkChange}
+              fullWidth
+            />
+          </Grid>
+        </Grid>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={handleSaveBulk}
+          sx={{ mt: 2 }}
+        >
+          Gerar horários
+        </Button>
+      </Box>
+    </Container>
   );
-};
+}

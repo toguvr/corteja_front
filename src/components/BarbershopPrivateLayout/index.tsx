@@ -31,9 +31,18 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 const drawerWidth = 240;
 const menuItems = [
-  { label: 'Agendar', icon: <CalendarTodayIcon />, page: '/agendar' },
-  { label: 'Assinatura', icon: <WorkspacePremiumIcon />, page: '/assinatura' },
-  // { label: 'Fidelidade', icon: <LoyaltyIcon />, page: '/fidelidade' },
+  {
+    label: 'Dashboard',
+    icon: <CalendarTodayIcon />,
+    page: '/empresa/dashboard',
+  },
+  {
+    label: 'Barbeiros',
+    icon: <WorkspacePremiumIcon />,
+    page: '/empresa/profissionais',
+  },
+  { label: 'Fidelidade', icon: <LoyaltyIcon />, page: '/empresa/agenda' },
+  { label: 'Horários', icon: <LoyaltyIcon />, page: '/empresa/horarios' },
 ];
 const menuItemsBottom = [
   {
@@ -221,18 +230,6 @@ export default function BarbershopPrivateLayout({
 
           <Box sx={{ flexGrow: 1 }} />
           <Box>
-            <Button
-              onClick={handleClickOpen}
-              variant="outlined"
-              color="secondary"
-            >
-              Saldo:{' '}
-              {(balance / 100).toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              })}
-            </Button>
-
             {/* <IconButton onClick={handleProfileMenuOpen} sx={{ p: 0 }}>
               <Avatar alt={user.name} src={user?.avatar_url} />
             </IconButton> */}
@@ -254,9 +251,7 @@ export default function BarbershopPrivateLayout({
           {menuItems.map((item, index) => (
             <ListItem key={item.label} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
-                onClick={
-                  item.page ? () => navigate(item.page + '/' + slug) : signOut
-                }
+                onClick={item.page ? () => navigate(item.page) : signOut}
                 sx={[
                   {
                     minHeight: 48,

@@ -12,7 +12,11 @@ import Assinaturas from '../pages/Subscriptions';
 import PaymentStatement from '../pages/PaymentStatement';
 import EditCustomerProfile from '../pages/Profile';
 import SignInBarbershop from '../pages/SigninBarbershop';
-import BarberAgenda from '../pages/BarberAgenda';
+import BarberAgenda from '../pages/BarbershopPages/BarberAgenda';
+import BarbersManagementPage from '../pages/BarbershopPages/Barbers';
+import BarbershopPrivateLayout from '../components/BarbershopPrivateLayout';
+import BarbershopDashboard from '../pages/BarbershopPages/Dashboard';
+import ScheduleManagement from '../pages/BarbershopPages/ScheduleManagement';
 
 const AppRouter = () => {
   return (
@@ -41,8 +45,52 @@ const AppRouter = () => {
 
       {/* admin */}
       <Route
-        path="/dashboard"
-        element={<PrivateRoute element={<BarberAgenda />} />}
+        path="/empresa/dashboard"
+        element={
+          <PrivateRoute
+            element={
+              <BarbershopPrivateLayout>
+                <BarbershopDashboard />
+              </BarbershopPrivateLayout>
+            }
+          />
+        }
+      />
+      <Route
+        path="/empresa/agenda"
+        element={
+          <PrivateRoute
+            element={
+              <BarbershopPrivateLayout>
+                <BarberAgenda />
+              </BarbershopPrivateLayout>
+            }
+          />
+        }
+      />
+      <Route
+        path="/empresa/profissionais"
+        element={
+          <PrivateRoute
+            element={
+              <BarbershopPrivateLayout>
+                <BarbersManagementPage />
+              </BarbershopPrivateLayout>
+            }
+          />
+        }
+      />
+      <Route
+        path="/empresa/horarios"
+        element={
+          <PrivateRoute
+            element={
+              <BarbershopPrivateLayout>
+                <ScheduleManagement />
+              </BarbershopPrivateLayout>
+            }
+          />
+        }
       />
       {/* publica */}
       <Route path="*" element={<h1>Página não encontrada</h1>} />
