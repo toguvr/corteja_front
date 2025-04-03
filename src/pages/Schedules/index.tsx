@@ -31,7 +31,13 @@ const weekDays = [
   'Sexta',
   'Sábado',
 ];
-
+const formatSimpleDate = (iso: string) => {
+  const d = new Date(iso);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+};
 const formatDate = (iso: string) => {
   const d = new Date(iso);
   return d.toLocaleDateString('pt-BR', {
@@ -179,8 +185,11 @@ export default function Schedules() {
           alignItems="center"
         >
           <Box>
+            {/* <Typography fontWeight="bold">
+              {formatSimpleDate(appointment?.date)}
+            </Typography> */}
             <Typography fontWeight="bold">
-              {formatDate(appointment?.date)}, {formatTime(appointment?.date)}
+              {formatDate(appointment?.date)} - {formatTime(appointment?.date)}
             </Typography>
           </Box>
           <Stack direction="row" spacing={1}>
