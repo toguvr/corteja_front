@@ -147,7 +147,7 @@ export default function BarberAgenda() {
               <Box key={item.id}>
                 <ListItem alignItems="flex-start">
                   <ListItemText
-                    primary={item.customer.name}
+                    primary={item.customer?.name}
                     secondary={
                       <>
                         <Typography
@@ -155,20 +155,20 @@ export default function BarberAgenda() {
                           variant="body2"
                           color="text.primary"
                         >
-                          Serviço: {item.service.name}
+                          Serviço: {item.service?.name}
                         </Typography>
                         <Box
                           display="flex"
                           alignItems="center"
                           component="a"
-                          href={`https://wa.me/${item.customer.phone?.replace(/\D/g, '')}`}
+                          href={`https://wa.me/${item.customer?.phone?.replace(/\D/g, '')}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           sx={{ textDecoration: 'none', color: '#25D366' }}
                         >
                           <WhatsAppIcon fontSize="small" sx={{ mr: 0.5 }} />
                           <Typography fontSize="0.9rem" fontWeight="bold">
-                            {item.customer.phone}
+                            {item.customer?.phone}
                           </Typography>
                         </Box>
                         <Chip
