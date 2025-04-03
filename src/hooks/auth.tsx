@@ -8,13 +8,14 @@ import React, {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { key } from '../config/key';
-import { User } from '../dtos';
 import api from '../services/api';
+import { BarbershopDto, CustomerDto } from '../dtos';
 
 interface AuthState {
   access_token: string;
   refresh_token: string;
-  user: User;
+  role?: 'customer' | 'admin';
+  user: CustomerDto | BarbershopDto;
 }
 
 interface SignInCredentials {
@@ -34,10 +35,11 @@ interface SignInCredentialsSocial {
 }
 
 interface AuthContextData {
-  user: User;
+  user: CustomerDto | BarbershopDto;
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
   isAuthenticated: boolean;
+  role?: 'customer' | 'admin';
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -49,11 +51,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const refresh_token = localStorage.getItem(key.refreshToken);
     const access_token = localStorage.getItem(key.token);
     const user = localStorage.getItem(key.user);
+    const role = localStorage.getItem(key.role);
 
     if (access_token && user && refresh_token) {
       api.defaults.headers.authorization = `Bearer ${access_token}`;
 
-      return { access_token, user: JSON.parse(user), refresh_token };
+      return { access_token, user: JSON.parse(user), refresh_token, role };
     }
 
     return {} as AuthState;
@@ -67,7 +70,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     const { access_token, user, refresh_token } = response.data;
-
+    if (role === 'admin') {
+      localStorage.setItem(key.role, 'admin');
+      localStorage.setItem(key.slug, user.slug);
+    } else {
+      localStorage.setItem(key.role, 'customer');
+    }
     localStorage.setItem(key.refreshToken, refresh_token);
     localStorage.setItem(key.token, access_token);
     localStorage.setItem(key.user, JSON.stringify(user));
@@ -92,7 +100,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user: data.user, signIn, signOut, isAuthenticated: !!data.user }}
+      value={{
+        user: data.user,
+        signIn,
+        signOut,
+        isAuthenticated: !!data.user,
+        role: data.role,
+      }}
     >
       {children}
     </AuthContext.Provider>

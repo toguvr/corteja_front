@@ -9,15 +9,20 @@ import {
   TableRow,
   Paper,
   Chip,
+  useMediaQuery,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import api from '../../services/api';
 import PrivateLayout from '../../components/PrivateLayout';
 import { PaymentDto } from '../../dtos';
+import { useTheme } from '@mui/material/styles';
 
 export default function PaymentStatement() {
   const [payments, setPayments] = useState<PaymentDto[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     async function fetchPayments() {
@@ -36,13 +41,19 @@ export default function PaymentStatement() {
 
   return (
     <PrivateLayout>
-      <Box p={3} sx={{ width: '100%' }}>
-        <Typography variant="h5" gutterBottom>
+      <Box p={isMobile ? 2 : 3} sx={{ width: '100%' }}>
+        <Typography variant={isMobile ? 'h6' : 'h5'} gutterBottom>
           Extrato de Pagamentos
         </Typography>
 
-        <TableContainer component={Paper}>
-          <Table>
+        <TableContainer
+          component={Paper}
+          sx={{
+            overflowX: 'auto',
+            maxWidth: '100%',
+          }}
+        >
+          <Table size={isMobile ? 'small' : 'medium'}>
             <TableHead>
               <TableRow>
                 <TableCell>Data</TableCell>
@@ -55,11 +66,11 @@ export default function PaymentStatement() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6}>Carregando...</TableCell>
+                  <TableCell colSpan={5}>Carregando...</TableCell>
                 </TableRow>
               ) : payments.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6}>
+                  <TableCell colSpan={5}>
                     Nenhum pagamento encontrado.
                   </TableCell>
                 </TableRow>
@@ -73,9 +84,9 @@ export default function PaymentStatement() {
                     <TableCell>{p.type || '-'}</TableCell>
                     <TableCell>
                       <Chip
-                        label={p.status}
+                        label={p.status === 'paid' ? 'Pago' : 'Pendente'}
                         color={p.status === 'paid' ? 'success' : 'warning'}
-                        size="small"
+                        size={isMobile ? 'small' : 'medium'}
                       />
                     </TableCell>
                     <TableCell align="right">

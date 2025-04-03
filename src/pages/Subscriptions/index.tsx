@@ -165,6 +165,7 @@ export default function Assinaturas() {
         cardId: selectedCardId,
         barbershopId: barbershop?.id,
         scheduleId: selectedScheduleId,
+        barberId: selectedBarberId,
       });
       loadAssinaturas();
       handleCloseModal();

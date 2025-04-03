@@ -131,7 +131,7 @@ const Drawer = styled(MuiDrawer, {
   ],
 }));
 
-export default function PrivateLayout({
+export default function BarbershopPrivateLayout({
   children,
 }: {
   children: React.ReactNode;

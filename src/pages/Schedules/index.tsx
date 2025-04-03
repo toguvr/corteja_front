@@ -43,7 +43,9 @@ const formatDate = (iso: string) => {
 
 const formatTime = (iso: string) => {
   const d = new Date(iso);
-  return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  return `${String(d.getUTCHours()).padStart(2, '0')}:${String(
+    d.getUTCMinutes()
+  ).padStart(2, '0')}`;
 };
 
 export default function Schedules() {

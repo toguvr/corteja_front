@@ -7,4 +7,5 @@ export const key = {
   userCards: '@corteja.userCards',
   userAddresses: '@corteja.userAddresses',
   services: '@corteja.services',
+  role: '@corteja.role',
 };

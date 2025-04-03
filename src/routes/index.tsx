@@ -12,10 +12,12 @@ import Assinaturas from '../pages/Subscriptions';
 import PaymentStatement from '../pages/PaymentStatement';
 import EditCustomerProfile from '../pages/Profile';
 import SignInBarbershop from '../pages/SigninBarbershop';
+import BarberAgenda from '../pages/BarberAgenda';
 
 const AppRouter = () => {
   return (
     <Routes>
+      {/* cliente */}
       <Route
         path="/agendar/:slug"
         element={<PrivateRoute element={<CustomerAppointment />} />}
@@ -37,6 +39,12 @@ const AppRouter = () => {
         element={<PrivateRoute element={<PaymentStatement />} />}
       />
 
+      {/* admin */}
+      <Route
+        path="/dashboard"
+        element={<PrivateRoute element={<BarberAgenda />} />}
+      />
+      {/* publica */}
       <Route path="*" element={<h1>Página não encontrada</h1>} />
 
       <Route path="/" element={<SignIn />} />

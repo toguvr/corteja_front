@@ -4,12 +4,16 @@ import { useAuth } from '../hooks/auth';
 import { key } from '../config/key';
 
 export const PrivateRoute = ({ element }: { element: React.ReactElement }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, role } = useAuth();
   const { slug } = useParams<{ slug: string }>();
   React.useEffect(() => {
     if (slug) {
       localStorage.setItem(key.slug, slug);
     }
   }, [slug]);
-  return isAuthenticated ? element : <Navigate to="/" />;
+  return isAuthenticated ? (
+    element
+  ) : (
+    <Navigate to={role === 'admin' ? '/admin' : '/'} />
+  );
 };
