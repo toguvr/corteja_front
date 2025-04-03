@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
 
-import { CreateAccount } from '../pages/CreateAccount';
 import { ForgotPassword } from '../pages/ForgotPassword';
 
 import { SignIn } from '../pages/Signin';
@@ -17,6 +16,7 @@ import BarbersManagementPage from '../pages/BarbershopPages/Barbers';
 import BarbershopPrivateLayout from '../components/BarbershopPrivateLayout';
 import BarbershopDashboard from '../pages/BarbershopPages/Dashboard';
 import ScheduleManagement from '../pages/BarbershopPages/ScheduleManagement';
+import { CreateAccount } from '../pages/CreateAccount';
 
 const AppRouter = () => {
   return (
