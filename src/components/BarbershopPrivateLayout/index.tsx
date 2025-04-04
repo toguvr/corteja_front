@@ -69,18 +69,18 @@ const menuItems = [
   },
 ];
 const menuItemsBottom = [
-  {
-    label: 'Agendamentos',
-    icon: <EventAvailableIcon />,
-    page: '/agendamentos',
-  },
-  {
-    label: 'Extrato',
-    icon: <ReceiptLongIcon />,
-    page: '/extrato',
-  },
+  // {
+  //   label: 'Agendamentos',
+  //   icon: <EventAvailableIcon />,
+  //   page: '/agendamentos',
+  // },
+  // {
+  //   label: 'Extrato',
+  //   icon: <ReceiptLongIcon />,
+  //   page: '/extrato',
+  // },
 
-  { label: 'Perfil', icon: <PersonIcon />, page: '/perfil' },
+  // { label: 'Perfil', icon: <PersonIcon />, page: '/perfil' },
   { label: 'Sair', icon: <LogoutIcon /> },
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
