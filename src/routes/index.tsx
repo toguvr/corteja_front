@@ -17,6 +17,8 @@ import BarbershopPrivateLayout from '../components/BarbershopPrivateLayout';
 import BarbershopDashboard from '../pages/BarbershopPages/Dashboard';
 import ScheduleManagement from '../pages/BarbershopPages/ScheduleManagement';
 import { CreateAccount } from '../pages/CreateAccount';
+import ServicesManagement from '../pages/BarbershopPages/ServicesManagement';
+import PlansManagement from '../pages/BarbershopPages/PlansManagement';
 
 const AppRouter = () => {
   return (
@@ -87,6 +89,30 @@ const AppRouter = () => {
             element={
               <BarbershopPrivateLayout>
                 <ScheduleManagement />
+              </BarbershopPrivateLayout>
+            }
+          />
+        }
+      />
+      <Route
+        path="/empresa/servicos"
+        element={
+          <PrivateRoute
+            element={
+              <BarbershopPrivateLayout>
+                <ServicesManagement />
+              </BarbershopPrivateLayout>
+            }
+          />
+        }
+      />
+      <Route
+        path="/empresa/planos"
+        element={
+          <PrivateRoute
+            element={
+              <BarbershopPrivateLayout>
+                <PlansManagement />
               </BarbershopPrivateLayout>
             }
           />

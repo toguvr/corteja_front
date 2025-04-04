@@ -29,7 +29,13 @@ import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import PeopleIcon from '@mui/icons-material/People';
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import ContentCutIcon from '@mui/icons-material/ContentCut';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 const drawerWidth = 240;
+
 const menuItems = [
   {
     label: 'Dashboard',
@@ -38,11 +44,29 @@ const menuItems = [
   },
   {
     label: 'Barbeiros',
-    icon: <WorkspacePremiumIcon />,
+    icon: <PeopleIcon />,
     page: '/empresa/profissionais',
   },
-  { label: 'Fidelidade', icon: <LoyaltyIcon />, page: '/empresa/agenda' },
-  { label: 'Horários', icon: <LoyaltyIcon />, page: '/empresa/horarios' },
+  {
+    label: 'Fidelidade',
+    icon: <CardGiftcardIcon />,
+    page: '/empresa/agenda',
+  },
+  {
+    label: 'Horários',
+    icon: <AccessTimeIcon />,
+    page: '/empresa/horarios',
+  },
+  {
+    label: 'Serviços',
+    icon: <ContentCutIcon />,
+    page: '/empresa/servicos',
+  },
+  {
+    label: 'Planos',
+    icon: <MonetizationOnIcon />,
+    page: '/empresa/planos',
+  },
 ];
 const menuItemsBottom = [
   {
