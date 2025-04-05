@@ -14,6 +14,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Alert,
+  AlertTitle,
 } from '@mui/material';
 import api from '../../services/api';
 import PrivateLayout from '../../components/PrivateLayout';
@@ -193,6 +195,23 @@ export default function Assinaturas() {
   return (
     <PrivateLayout>
       <Container sx={{ py: 4 }}>
+        <Alert severity="info" sx={{ mb: 4 }}>
+          <AlertTitle>Importante sobre sua assinatura</AlertTitle>
+          Ao contratar uma assinatura, o horário escolhido será reservado
+          exclusivamente para você.
+          <strong>
+            {' '}
+            A partir da próxima ocorrência disponível do dia da semana
+            selecionado
+          </strong>
+          , iniciaremos seus agendamentos fixos automaticamente.
+          <br />
+          <br />
+          Caso já existam atendimentos no horário desejado, esses compromissos
+          terão prioridade. Porém, <strong>em no máximo 2 semanas</strong>, o
+          horário será fixado em seu nome. Durante esse período de transição,
+          você poderá escolher um horário alternativo para aproveitar seu saldo.
+        </Alert>
         <Typography variant="h4" gutterBottom>
           Minhas Assinaturas
         </Typography>
