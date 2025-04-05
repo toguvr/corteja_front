@@ -69,6 +69,11 @@ const menuItems = [
     icon: <MonetizationOnIcon />,
     page: '/empresa/planos',
   },
+  {
+    label: 'Extrato',
+    icon: <ReceiptLongIcon />,
+    page: '/empresa/extrato',
+  },
 ];
 const menuItemsBottom = [
   // {
