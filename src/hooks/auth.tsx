@@ -87,6 +87,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = useCallback(() => {
+    if (data.role === 'admin') {
+      navigate('/admin');
+    }
     const slug = localStorage.getItem(key.slug);
     localStorage.clear();
     localStorage.setItem(key.slug, slug!!);

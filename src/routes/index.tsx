@@ -19,6 +19,10 @@ import ScheduleManagement from '../pages/BarbershopPages/ScheduleManagement';
 import { CreateAccount } from '../pages/CreateAccount';
 import ServicesManagement from '../pages/BarbershopPages/ServicesManagement';
 import PlansManagement from '../pages/BarbershopPages/PlansManagement';
+import BarbershopCreation from '../pages/BarbershopPages/BarbershopCreation';
+import PublicLayout from '../components/PublicLayout';
+import PublicLayoutBarbershop from '../components/PublicLayoutBarbershop';
+import RecipientBalancePage from '../pages/BarbershopPages/Balance';
 
 const AppRouter = () => {
   return (
@@ -118,12 +122,32 @@ const AppRouter = () => {
           />
         }
       />
+      <Route
+        path="/empresa/extrato"
+        element={
+          <PrivateRoute
+            element={
+              <BarbershopPrivateLayout>
+                <RecipientBalancePage />
+              </BarbershopPrivateLayout>
+            }
+          />
+        }
+      />
       {/* publica */}
       <Route path="*" element={<h1>Página não encontrada</h1>} />
 
       <Route path="/" element={<SignIn />} />
       <Route path="/admin" element={<SignInBarbershop />} />
       <Route path="/criar-conta" element={<CreateAccount />} />
+      <Route
+        path="/criar-empresa"
+        element={
+          <PublicLayoutBarbershop>
+            <BarbershopCreation />
+          </PublicLayoutBarbershop>
+        }
+      />
       <Route path="/esqueci-senha" element={<ForgotPassword />} />
       <Route path="/redefinir-senha" element={<ResetPassword />} />
     </Routes>

@@ -137,7 +137,7 @@ const SignInBarbershop = () => {
         sx={{ mt: 2 }}
       >
         Ainda não tem uma empresa?{' '}
-        <RegisterLink href="/criar-conta/barbearia">Cadastre-se</RegisterLink>
+        <RegisterLink href="/criar-empresa">Cadastre-se</RegisterLink>
       </Typography>
     </PublicLayout>
   );

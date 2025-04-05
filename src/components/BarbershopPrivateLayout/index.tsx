@@ -16,7 +16,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { Avatar, Button, Menu, MenuItem } from '@mui/material';
+import { Avatar, Button, Menu, MenuItem, Tooltip } from '@mui/material';
 import { useAuth } from '../../hooks/auth';
 import PurchaseDialog from '../PurchaseDialog';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -34,6 +34,8 @@ import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ContentCutIcon from '@mui/icons-material/ContentCut';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import { toast } from 'react-toastify';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 const drawerWidth = 240;
 
 const menuItems = [
@@ -254,9 +256,18 @@ export default function BarbershopPrivateLayout({
 
           <Box sx={{ flexGrow: 1 }} />
           <Box>
-            {/* <IconButton onClick={handleProfileMenuOpen} sx={{ p: 0 }}>
-              <Avatar alt={user.name} src={user?.avatar_url} />
-            </IconButton> */}
+            <IconButton
+              onClick={() => {
+                const link = `https://app.com/${user.slug}`;
+                navigator.clipboard.writeText(link);
+                toast.success('Link copiado!');
+              }}
+              sx={{ p: 1 }}
+            >
+              <Tooltip title="Copiar link da barbearia">
+                <ContentCopyIcon />
+              </Tooltip>
+            </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
