@@ -208,7 +208,7 @@ export default function Assinaturas() {
           <br />
           <br />
           Caso já existam atendimentos no horário desejado, esses compromissos
-          terão prioridade. Porém, <strong>em no máximo 2 semanas</strong>, o
+          terão prioridade. Porém, <strong>assim que passados</strong>, o
           horário será fixado em seu nome. Durante esse período de transição,
           você poderá escolher um horário alternativo para aproveitar seu saldo.
         </Alert>
@@ -255,9 +255,9 @@ export default function Assinaturas() {
                           / ciclo
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Dia : {weekDays[sub.schedule.weekDay]}
+                          Dia : {weekDays[sub?.schedule?.weekDay]}
                           {', '}
-                          {sub.schedule.time}
+                          {sub?.schedule?.time}
                         </Typography>
                       </CardContent>
                       <CardActions>
