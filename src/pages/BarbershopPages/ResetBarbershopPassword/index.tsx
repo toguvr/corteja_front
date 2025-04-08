@@ -12,12 +12,12 @@ import {
   ForgotPasswordEmail,
   RegisterLink,
 } from './styles';
-import PublicLayout from '../../components/PublicLayout';
-import { theme } from '../../theme';
-import api from '../../services/api';
-import { LoginEmail } from '../CreateAccount/styles';
+import PublicLayout from '../../../components/PublicLayout';
+import { theme } from '../../../theme';
+import api from '../../../services/api';
+import { LoginEmail } from '../../CreateAccount/styles';
 
-export const ResetPassword = () => {
+export const ResetBarbershopPassword = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState<{ [key: string]: any }>({});
   const [values, setValues] = useState<{ [key: string]: any }>({});
@@ -42,13 +42,13 @@ export const ResetPassword = () => {
 
       await schema.validate(values, { abortEarly: false });
 
-      await api.post('/customers/reset-password', {
+      await api.post('/barbershops/reset-password', {
         code,
         password: values.password,
       });
 
       toast.success('Senha alterada!');
-      navigate('/');
+      navigate('/admin');
     } catch (err: any) {
       if (err instanceof Yup.ValidationError) {
         setErrors({ email: err.errors[0] });
@@ -132,7 +132,7 @@ export const ResetPassword = () => {
         textAlign="center"
         sx={{ mt: 2 }}
       >
-        Lembrou sua senha? <RegisterLink href="/">Entrar</RegisterLink>
+        Lembrou sua senha? <RegisterLink href="/admin">Entrar</RegisterLink>
       </Typography>
     </PublicLayout>
   );

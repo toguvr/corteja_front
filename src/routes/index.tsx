@@ -23,6 +23,8 @@ import BarbershopCreation from '../pages/BarbershopPages/BarbershopCreation';
 import PublicLayout from '../components/PublicLayout';
 import PublicLayoutBarbershop from '../components/PublicLayoutBarbershop';
 import RecipientBalancePage from '../pages/BarbershopPages/Balance';
+import { ForgotBarbershopPassword } from '../pages/BarbershopPages/ForgotBarbershopPassword';
+import { ResetBarbershopPassword } from '../pages/BarbershopPages/ResetBarbershopPassword';
 
 const AppRouter = () => {
   return (
@@ -48,7 +50,6 @@ const AppRouter = () => {
         path="/extrato"
         element={<PrivateRoute element={<PaymentStatement />} />}
       />
-
       {/* admin */}
       <Route
         path="/empresa/dashboard"
@@ -136,7 +137,6 @@ const AppRouter = () => {
       />
       {/* publica */}
       <Route path="*" element={<h1>Página não encontrada</h1>} />
-
       <Route path="/" element={<SignIn />} />
       <Route path="/admin" element={<SignInBarbershop />} />
       <Route path="/criar-conta" element={<CreateAccount />} />
@@ -149,7 +149,15 @@ const AppRouter = () => {
         }
       />
       <Route path="/esqueci-senha" element={<ForgotPassword />} />
-      <Route path="/redefinir-senha" element={<ResetPassword />} />
+      <Route path="/redefinir-senha" element={<ResetPassword />} />{' '}
+      <Route
+        path="/empresa/esqueci-senha"
+        element={<ForgotBarbershopPassword />}
+      />
+      <Route
+        path="/empresa/redefinir-senha"
+        element={<ResetBarbershopPassword />}
+      />
     </Routes>
   );
 };

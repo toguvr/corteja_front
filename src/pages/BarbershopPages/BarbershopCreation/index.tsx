@@ -26,9 +26,12 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 export default function RegisterInformationForm() {
   const { signIn } = useAuth();
+  const [cepBuscado, setCepBuscado] = useState(false);
+
   const [form, setForm] = useState({
     name: '',
     email: '',
+    trading_name: '',
     password: '',
     slug: '',
     avatar: '',
@@ -151,6 +154,77 @@ export default function RegisterInformationForm() {
       setForm(updatedForm);
     }
   };
+  const buscarEndereco = async () => {
+    const cepLimpo = form.address.zip_code.replace(/\D/g, '');
+    if (cepLimpo.length !== 8) {
+      alert('Digite um CEP válido com 8 dígitos.');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://viacep.com.br/ws/${cepLimpo}/json/`
+      );
+      const data = await response.json();
+
+      if (data.erro) {
+        alert('CEP não encontrado.');
+        return;
+      }
+
+      setForm((prev) => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          street: data.logradouro || '',
+          neighborhood: data.bairro || '',
+          city: data.localidade || '',
+          state: data.uf || '',
+        },
+      }));
+
+      setCepBuscado(true);
+    } catch (err) {
+      alert('Erro ao buscar o CEP.');
+    }
+  };
+  const buscarEnderecoRepresentante = async () => {
+    const cepLimpo = form.representative.address.zip_code.replace(/\D/g, '');
+    if (cepLimpo.length !== 8) {
+      alert('Digite um CEP válido com 8 dígitos.');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://viacep.com.br/ws/${cepLimpo}/json/`
+      );
+      const data = await response.json();
+
+      if (data.erro) {
+        alert('CEP não encontrado.');
+        return;
+      }
+
+      setForm((prev) => ({
+        ...prev,
+        representative: {
+          ...prev.representative,
+          address: {
+            ...prev.representative.address,
+            street: data.logradouro || '',
+            neighborhood: data.bairro || '',
+            city: data.localidade || '',
+            state: data.uf || '',
+          },
+        },
+      }));
+
+      setCepBuscado(true);
+    } catch (err) {
+      alert('Erro ao buscar o CEP.');
+    }
+  };
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -232,7 +306,7 @@ export default function RegisterInformationForm() {
             ],
           }),
           ...(isIndividual && {
-            birthdate: '23/11/1993',
+            birthdate: form.birth_date,
             professional_occupation: form.professional_occupation,
             mother_name: form.mother_name,
             monthly_income: form.monthly_income,
@@ -261,6 +335,31 @@ export default function RegisterInformationForm() {
       setLoading(false);
     }
   };
+  const formatCurrency = (value) => {
+    const cents = Number(value || 0);
+    return (cents / 100).toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    });
+  };
+
+  const handleMoneyChange = (e) => {
+    const raw = e.target.value.replace(/\D/g, '');
+    const cents = Number(raw);
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: isNaN(cents) ? '' : cents,
+    }));
+  };
+  const slugify = (text: string) =>
+    text
+      .toString()
+      .normalize('NFD') // remove acentos
+      .replace(/[\u0300-\u036f]/g, '') // remove diacríticos
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-') // troca tudo por hífen
+      .replace(/^-+|-+$/g, ''); // remove hífens extras
   return (
     <Box p={2}>
       {' '}
@@ -294,18 +393,40 @@ export default function RegisterInformationForm() {
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      fullWidth
                       label="CNPJ"
+                      fullWidth
+                      autoComplete="off"
+                      //  error={!!errors.holder_document}
+                      //  helperText={errors.holder_document}
                       value={form.document}
-                      onChange={handleChange}
-                      name="document"
-                      type="text"
-                      InputProps={{
-                        inputProps: {
-                          maxLength: 14,
-                        },
+                      onChange={(e) => {
+                        let onlyNumbers = e.target.value.replace(/\D/g, '');
+
+                        if (onlyNumbers.length > 12) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{0,2})/,
+                            '$1.$2.$3/$4-$5'
+                          );
+                        } else if (onlyNumbers.length > 8) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{2})(\d{3})(\d{3})(\d{0,4})/,
+                            '$1.$2.$3/$4'
+                          );
+                        } else if (onlyNumbers.length > 5) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{2})(\d{3})(\d{0,3})/,
+                            '$1.$2.$3'
+                          );
+                        } else if (onlyNumbers.length > 2) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{2})(\d{0,3})/,
+                            '$1.$2'
+                          );
+                        }
+
+                        setForm({ ...form, document: onlyNumbers });
                       }}
-                      InputLabelProps={{ shrink: true }}
+                      inputProps={{ maxLength: 18 }} // 14 números + 4 pontuações
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -314,8 +435,16 @@ export default function RegisterInformationForm() {
                       onChange={handleChange}
                       name="name"
                       fullWidth
-                      label="Nome"
-                    />
+                      label="Nome da empresa"
+                    />{' '}
+                    {form.name && (
+                      <Typography
+                        variant="body2"
+                        sx={{ mt: 0.5, ml: 0.5, color: 'text.secondary' }}
+                      >
+                        Seu link: <strong>{slugify(form.name)}</strong>
+                      </Typography>
+                    )}
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
@@ -337,11 +466,32 @@ export default function RegisterInformationForm() {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      fullWidth
                       label="Celular"
+                      fullWidth
+                      // error={!!errors.phone}
+                      // helperText={errors.phone}
                       value={form.phone}
-                      onChange={handleChange}
-                      name="phone"
+                      onChange={(e) => {
+                        let onlyNumbers = e.target.value.replace(/\D/g, '');
+                        if (onlyNumbers.length > 10) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{2})(\d{5})(\d{4}).*/,
+                            '($1) $2-$3'
+                          );
+                        } else if (onlyNumbers.length > 5) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{2})(\d{4})(\d{0,4})/,
+                            '($1) $2-$3'
+                          );
+                        } else if (onlyNumbers.length > 2) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{2})(\d{0,5})/,
+                            '($1) $2'
+                          );
+                        }
+                        setForm({ ...form, phone: onlyNumbers });
+                      }}
+                      inputProps={{ maxLength: 15 }}
                     />
                   </Grid>
 
@@ -365,19 +515,11 @@ export default function RegisterInformationForm() {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      fullWidth
-                      label="Receita Anual"
-                      value={form.annual_revenue}
-                      onChange={handleChange}
                       name="annual_revenue"
-                      InputProps={{
-                        inputProps: {
-                          maxLength: 14,
-                        },
-                      }}
-                      InputLabelProps={{ shrink: true }}
-                      placeholder="R$ 300.000,00"
-                      type="text"
+                      label="Receita Anual"
+                      value={formatCurrency(form.annual_revenue)}
+                      onChange={handleMoneyChange}
+                      fullWidth
                     />
                   </Grid>
                 </Grid>
@@ -389,18 +531,35 @@ export default function RegisterInformationForm() {
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      fullWidth
                       label="CPF"
+                      fullWidth
+                      margin="normal"
+                      placeholder="Digite o CPF"
+                      autoComplete="off"
+                      // error={!!errors.document}
+                      // helperText={errors.document}
                       value={form.document}
-                      onChange={handleChange}
-                      name="document"
-                      type="text"
-                      InputProps={{
-                        inputProps: {
-                          maxLength: 11,
-                        },
+                      onChange={(e) => {
+                        let onlyNumbers = e.target.value.replace(/\D/g, '');
+                        if (onlyNumbers.length > 9) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{3})(\d{3})(\d{3})(\d{0,2})/,
+                            '$1.$2.$3-$4'
+                          );
+                        } else if (onlyNumbers.length > 6) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{3})(\d{3})(\d{0,3})/,
+                            '$1.$2.$3'
+                          );
+                        } else if (onlyNumbers.length > 3) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{3})(\d{0,3})/,
+                            '$1.$2'
+                          );
+                        }
+                        setForm({ ...form, [e.target.name]: onlyNumbers });
                       }}
-                      InputLabelProps={{ shrink: true }}
+                      inputProps={{ maxLength: 14 }}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -417,7 +576,6 @@ export default function RegisterInformationForm() {
                     <TextField
                       fullWidth
                       label="Email"
-                      defaultValue="augustotf93@gmail.com"
                       value={form.email}
                       onChange={handleChange}
                       name="email"
@@ -426,18 +584,32 @@ export default function RegisterInformationForm() {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      fullWidth
                       label="Celular"
+                      fullWidth
+                      // error={!!errors.phone}
+                      // helperText={errors.phone}
                       value={form.phone}
-                      onChange={handleChange}
-                      name="phone"
-                      InputProps={{
-                        inputProps: {
-                          maxLength: 11,
-                        },
+                      onChange={(e) => {
+                        let onlyNumbers = e.target.value.replace(/\D/g, '');
+                        if (onlyNumbers.length > 10) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{2})(\d{5})(\d{4}).*/,
+                            '($1) $2-$3'
+                          );
+                        } else if (onlyNumbers.length > 5) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{2})(\d{4})(\d{0,4})/,
+                            '($1) $2-$3'
+                          );
+                        } else if (onlyNumbers.length > 2) {
+                          onlyNumbers = onlyNumbers.replace(
+                            /^(\d{2})(\d{0,5})/,
+                            '($1) $2'
+                          );
+                        }
+                        setForm({ ...form, phone: onlyNumbers });
                       }}
-                      InputLabelProps={{ shrink: true }}
-                      type="text"
+                      inputProps={{ maxLength: 15 }}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -464,14 +636,9 @@ export default function RegisterInformationForm() {
                     <TextField
                       fullWidth
                       label="Renda Mensal"
-                      value={form.monthly_income}
-                      onChange={handleChange}
+                      value={formatCurrency(form.monthly_income)}
+                      onChange={handleMoneyChange}
                       name="monthly_income"
-                      InputProps={{
-                        inputProps: {
-                          maxLength: 14,
-                        },
-                      }}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -494,6 +661,26 @@ export default function RegisterInformationForm() {
           {
             <Paper variant="outlined" sx={{ p: 2, mb: 4 }}>
               <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="CEP"
+                    value={form.address.zip_code}
+                    onChange={handleChange}
+                    name="address.zip_code"
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    fullWidth
+                    size="medium"
+                    onClick={buscarEndereco}
+                  >
+                    Buscar
+                  </Button>
+                </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
@@ -548,15 +735,6 @@ export default function RegisterInformationForm() {
                     onChange={handleChange}
                     name="address.state"
                     label="Estado"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="CEP"
-                    value={form.address.zip_code}
-                    onChange={handleChange}
-                    name="address.zip_code"
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -694,9 +872,9 @@ export default function RegisterInformationForm() {
                     fullWidth
                     label="Data de Nascimento"
                     type="date"
-                    value={form.representative.birth_date}
+                    value={form.representative.birthdate}
                     onChange={handleChange}
-                    name="representative.birth_date"
+                    name="representative.birthdate"
                     InputLabelProps={{ shrink: true }}
                   />
                 </Grid>
@@ -704,8 +882,8 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="Renda Mensal"
-                    value={form.representative.monthly_income}
-                    onChange={handleChange}
+                    onChange={handleMoneyChange}
+                    value={formatCurrency(form.representative.monthly_income)}
                     name="representative.monthly_income"
                   />
                 </Grid>
@@ -735,6 +913,27 @@ export default function RegisterInformationForm() {
                 Endereço do Sócio
               </Typography>
               <Grid container spacing={2}>
+                {' '}
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="CEP"
+                    value={form.representative.address.zip_code}
+                    onChange={handleChange}
+                    name="representative.address.zip_code"
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    fullWidth
+                    size="medium"
+                    onClick={buscarEnderecoRepresentante}
+                  >
+                    Buscar
+                  </Button>
+                </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
@@ -789,15 +988,6 @@ export default function RegisterInformationForm() {
                     value={form.representative.address.state}
                     onChange={handleChange}
                     name="representative.address.state"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="CEP"
-                    value={form.representative.address.zip_code}
-                    onChange={handleChange}
-                    name="representative.address.zip_code"
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>

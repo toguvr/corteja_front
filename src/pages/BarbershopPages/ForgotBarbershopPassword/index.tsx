@@ -11,12 +11,12 @@ import {
   ForgotPasswordEmail,
   RegisterLink,
 } from './styles';
-import PublicLayout from '../../components/PublicLayout';
-import { theme } from '../../theme';
-import api from '../../services/api';
+import PublicLayout from '../../../components/PublicLayout';
+import { theme } from '../../../theme';
+import api from '../../../services/api';
 import ReCAPTCHA from 'react-google-recaptcha';
 
-export const ForgotPassword = () => {
+export const ForgotBarbershopPassword = () => {
   const [verified, setVerified] = useState(false);
   const navigate = useNavigate();
   const [errors, setErrors] = useState<{ [key: string]: any }>({});
@@ -35,10 +35,10 @@ export const ForgotPassword = () => {
 
       await schema.validate({ email }, { abortEarly: false });
 
-      await api.post('/customers/forgot', { email });
+      await api.post('/barbershops/forgot', { email });
 
       toast.success('E-mail de recuperação enviado!');
-      navigate('/');
+      navigate('/admin');
     } catch (err: any) {
       if (err instanceof Yup.ValidationError) {
         setErrors({ email: err.errors[0] });
@@ -105,7 +105,7 @@ export const ForgotPassword = () => {
         textAlign="center"
         sx={{ mt: 2 }}
       >
-        Lembrou sua senha? <RegisterLink href="/">Entrar</RegisterLink>
+        Lembrou sua senha? <RegisterLink href="/admin">Entrar</RegisterLink>
       </Typography>
     </PublicLayout>
   );
