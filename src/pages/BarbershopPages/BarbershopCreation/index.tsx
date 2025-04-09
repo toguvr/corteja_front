@@ -462,7 +462,8 @@ export default function RegisterInformationForm() {
                   form.representative.self_declared_legal_representative,
                 address: {
                   street: form.address.street,
-                  complementary: form.address.complementary || 'sem complemento',
+                  complementary:
+                    form.address.complementary || 'sem complemento',
                   street_number: form.address.street_number,
                   neighborhood: form.address.neighborhood,
                   city: form.address.city,
@@ -1398,89 +1399,4 @@ export default function RegisterInformationForm() {
       />
     </Box>
   );
-}
-
-
-{
-  "barbershopName": "Codar Informatica",
-  "password": "123456",
-  "register_information": {
-      "type": "company",
-      "document": "44527868000110",
-      "name": "Codar Informatica",
-      "email": "augusto@hubees.com.br",
-      "phone_numbers": [
-          {
-              "ddd": "24",
-              "number": "998169141",
-              "type": "mobile"
-          }
-      ],
-      "site_url": null,
-      "company_name": "Codar",
-      "trading_name": "",
-      "annual_revenue": 36000000,
-      "founding_date": "",
-      "address": {
-          "street": "Rua Senador Irineu Machado",
-          "complementary": "ap 501",
-          "street_number": "10",
-          "neighborhood": "Jardim Amália",
-          "city": "Volta Redonda",
-          "state": "RJ",
-          "zip_code": "27251070",
-          "reference_point": "sem referencia"
-      },
-      "main_address": {
-          "street": "Rua Senador Irineu Machado",
-          "complement": "ap 501",
-          "number": "10",
-          "neighborhood": "Jardim Amália",
-          "city": "Volta Redonda",
-          "state": "RJ",
-          "zip_code": "27251070",
-          "reference_point": "sem referencia"
-      },
-      "managing_partners": [
-          {
-              "name": "Augusto Telles Francisco",
-              "email": "augustotf93@gmail.com",
-              "document": "14752479745",
-              "type": "individual",
-              "mother_name": "Maria Rita Telles Francisco",
-              "birth_date": "23/11/1993",
-              "monthly_income": 3000000,
-              "professional_occupation": "Empresario",
-              "self_declared_legal_representative": true,
-              "address": {
-                  "street": "Rua Senador Irineu Machado",
-                  "complement": "ap 501",
-                  "number": "10",
-                  "neighborhood": "Jardim Amália",
-                  "city": "Volta Redonda",
-                  "state": "RJ",
-                  "zip_code": "27251070",
-                  "reference_point": "sem referencia"
-              },
-              "phone_numbers": [
-                  {
-                      "ddd": "24",
-                      "number": "998169141",
-                      "type": "mobile"
-                  }
-              ]
-          }
-      ]
-  },
-  "default_bank_account": {
-      "bank": "260",
-      "branch_number": "0001",
-      "branch_check_digit": "0",
-      "account_number": "78671441",
-      "account_check_digit": "2",
-      "type": "checking",
-      "holder_type": "company",
-      "holder_document": "14752479745",
-      "holder_name": "Augusto Telles Francisco"
-  }
 }
