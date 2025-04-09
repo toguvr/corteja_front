@@ -314,12 +314,17 @@ export default function RegisterInformationForm() {
     }
   };
   function formatBirthdate(value: string): string {
-    if (value.length >= 5) {
-      return value.replace(/^(\d{2})(\d{2})(\d{0,4}).*/, '$1/$2/$3');
-    } else if (value.length >= 3) {
-      return value.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
+    const cleaned = value.replace(/\D/g, ''); // remove tudo que não é número
+
+    if (cleaned.length >= 7) {
+      return cleaned.replace(/^(\d{2})(\d{2})(\d{0,4}).*/, '$1/$2/$3');
+    } else if (cleaned.length >= 5) {
+      return cleaned.replace(/^(\d{2})(\d{2})(\d{0,2})/, '$1/$2/$3');
+    } else if (cleaned.length >= 3) {
+      return cleaned.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
     }
-    return value;
+
+    return cleaned;
   }
   const buscarEndereco = async () => {
     setCepLoading(true);
