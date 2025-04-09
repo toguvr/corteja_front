@@ -22,965 +22,129 @@ import {
 import { useAuth } from '../../../hooks/auth';
 import { toast } from 'react-toastify';
 import api from '../../../services/api';
-
+import * as yup from 'yup';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import { banks } from '../../../utils/banks';
 
-const banks = [
-  {
-    value: '100',
-    name: '100 - PLANNER CV S.A.',
-  },
-  {
-    value: '101',
-    name: '101 - RENASCENCA DTVM LTDA',
-  },
-  {
-    value: '102',
-    name: '102 - XP INVESTIMENTOS CCTVM S/A',
-  },
-  {
-    value: '104',
-    name: '104 - CAIXA ECONOMICA FEDERAL',
-  },
-  {
-    value: '105',
-    name: '105 - LECCA CFI S.A.',
-  },
-  {
-    value: '107',
-    name: '107 - BCO BOCOM BBM S.A.',
-  },
-  {
-    value: '108',
-    name: '108 - PORTOCRED S.A. - CFI',
-  },
-  {
-    value: '111',
-    name: '111 - OLIVEIRA TRUST DTVM S.A.',
-  },
-  {
-    value: '113',
-    name: '113 - MAGLIANO S.A. CCVM',
-  },
-  {
-    value: '114',
-    name: '114 - CENTRAL COOPERATIVA DE CRÉDITO NO ESTADO DO ESPÍRITO SANTO',
-  },
-  {
-    value: '117',
-    name: '117 - ADVANCED CC LTDA',
-  },
-  {
-    value: '118',
-    name: '118 - STANDARD CHARTERED BI S.A.',
-  },
-  {
-    value: '119',
-    name: '119 - BCO WESTERN UNION',
-  },
-  {
-    value: '120',
-    name: '120 - BCO RODOBENS S.A.',
-  },
-  {
-    value: '121',
-    name: '121 - BCO AGIBANK S.A.',
-  },
-  {
-    value: '122',
-    name: '122 - BCO BRADESCO BERJ S.A.',
-  },
-  {
-    value: '124',
-    name: '124 - BCO WOORI BANK DO BRASIL S.A.',
-  },
-  {
-    value: '125',
-    name: '125 - PLURAL BCO BM',
-  },
-  {
-    value: '126',
-    name: '126 - BR PARTNERS BI',
-  },
-  {
-    value: '127',
-    name: '127 - CODEPE CVC S.A.',
-  },
-  {
-    value: '128',
-    name: '128 - MS BANK S.A. BCO DE CÂMBIO',
-  },
-  {
-    value: '129',
-    name: '129 - UBS BRASIL BI S.A.',
-  },
-  {
-    value: '130',
-    name: '130 - CARUANA SCFI',
-  },
-  {
-    value: '131',
-    name: '131 - TULLETT PREBON BRASIL CVC LTDA',
-  },
-  {
-    value: '132',
-    name: '132 - ICBC DO BRASIL BM S.A.',
-  },
-  {
-    value: '133',
-    name: '133 - CRESOL CONFEDERAÇÃO',
-  },
-  {
-    value: '134',
-    name: '134 - BGC LIQUIDEZ DTVM LTDA',
-  },
-  {
-    value: '136',
-    name: '136 - UNICRED',
-  },
-  {
-    value: '138',
-    name: '138 - GET MONEY CC LTDA',
-  },
-  {
-    value: '139',
-    name: '139 - INTESA SANPAOLO BRASIL S.A. BM',
-  },
-  {
-    value: '140',
-    name: '140 - EASYNVEST - TÍTULO CV SA',
-  },
-  {
-    value: '142',
-    name: '142 - BROKER BRASIL CC LTDA.',
-  },
-  {
-    value: '143',
-    name: '143 - TREVISO CC S.A.',
-  },
-  {
-    value: '144',
-    name: '144 - BEXS BCO DE CAMBIO S.A.',
-  },
-  {
-    value: '145',
-    name: '145 - LEVYCAM CCV LTDA',
-  },
-  {
-    value: '146',
-    name: '146 - GUITTA CC LTDA',
-  },
-  {
-    value: '149',
-    name: '149 - FACTA S.A. CFI',
-  },
-  {
-    value: '157',
-    name: '157 - ICAP DO BRASIL CTVM LTDA.',
-  },
-  {
-    value: '159',
-    name: '159 - CASA CREDITO S.A. SCM',
-  },
-  {
-    value: '163',
-    name: '163 - COMMERZBANK BRASIL S.A. - BCO MÚLTIPLO',
-  },
-  {
-    value: '169',
-    name: '169 - BCO OLÉ BONSUCESSO CONSIGNADO S.A.',
-  },
-  {
-    value: '173',
-    name: '173 - BRL TRUST DTVM SA',
-  },
-  {
-    value: '174',
-    name: '174 - PERNAMBUCANAS FINANC S.A. CFI',
-  },
-  {
-    value: '177',
-    name: '177 - GUIDE',
-  },
-  {
-    value: '180',
-    name: '180 - CM CAPITAL MARKETS CCTVM LTDA',
-  },
-  {
-    value: '182',
-    name: '182 - DACASA FINANCEIRA S/A - SCFI',
-  },
-  {
-    value: '183',
-    name: '183 - SOCRED SA - SCMEPP',
-  },
-  {
-    value: '184',
-    name: '184 - BCO ITAÚ BBA S.A.',
-  },
-  {
-    value: '188',
-    name: '188 - ATIVA S.A. INVESTIMENTOS CCTVM',
-  },
-  {
-    value: '189',
-    name: '189 - HS FINANCEIRA',
-  },
-  {
-    value: '190',
-    name: '190 - SERVICOOP',
-  },
-  {
-    value: '191',
-    name: '191 - NOVA FUTURA CTVM LTDA.',
-  },
-  {
-    value: '194',
-    name: '194 - PARMETAL DTVM LTDA',
-  },
-  {
-    value: '196',
-    name: '196 - FAIR CC S.A.',
-  },
-  {
-    value: '197',
-    name: '197 - STONE PAGAMENTOS S.A.',
-  },
-  {
-    value: '208',
-    name: '208 - BANCO BTG PACTUAL S.A.',
-  },
-  {
-    value: '212',
-    name: '212 - BANCO ORIGINAL',
-  },
-  {
-    value: '213',
-    name: '213 - BCO ARBI S.A.',
-  },
-  {
-    value: '217',
-    name: '217 - BANCO JOHN DEERE S.A.',
-  },
-  {
-    value: '218',
-    name: '218 - BCO BS2 S.A.',
-  },
-  {
-    value: '222',
-    name: '222 - BCO CRÉDIT AGRICOLE BR S.A.',
-  },
-  {
-    value: '224',
-    name: '224 - BCO FIBRA S.A.',
-  },
-  {
-    value: '233',
-    name: '233 - BANCO CIFRA',
-  },
-  {
-    value: '237',
-    name: '237 - BCO BRADESCO S.A.',
-  },
-  {
-    value: '241',
-    name: '241 - BCO CLASSICO S.A.',
-  },
-  {
-    value: '243',
-    name: '243 - BCO MÁXIMA S.A.',
-  },
-  {
-    value: '246',
-    name: '246 - BCO ABC BRASIL S.A.',
-  },
-  {
-    value: '249',
-    name: '249 - BANCO INVESTCRED UNIBANCO S.A.',
-  },
-  {
-    value: '250',
-    name: '250 - BCV',
-  },
-  {
-    value: '253',
-    name: '253 - BEXS CC S.A.',
-  },
-  {
-    value: '254',
-    name: '254 - PARANA BCO S.A.',
-  },
-  {
-    value: '260',
-    name: '260 - NU PAGAMENTOS S.A.',
-  },
-  {
-    value: '265',
-    name: '265 - BCO FATOR S.A.',
-  },
-  {
-    value: '266',
-    name: '266 - BCO CEDULA S.A.',
-  },
-  {
-    value: '268',
-    name: '268 - BARI CIA HIPOTECÁRIA',
-  },
-  {
-    value: '269',
-    name: '269 - HSBC BANCO DE INVESTIMENTO',
-  },
-  {
-    value: '270',
-    name: '270 - SAGITUR CC LTDA',
-  },
-  {
-    value: '271',
-    name: '271 - IB CCTVM S.A.',
-  },
-  {
-    value: '272',
-    name: '272 - AGK CC S.A.',
-  },
-  {
-    value: '273',
-    name: '273 - CCR DE SÃO MIGUEL DO OESTE',
-  },
-  {
-    value: '274',
-    name: '274 - MONEY PLUS SCMEPP LTDA',
-  },
-  {
-    value: '276',
-    name: '276 - SENFF S.A. - CFI',
-  },
-  {
-    value: '278',
-    name: '278 - GENIAL INVESTIMENTOS CVM S.A.',
-  },
-  {
-    value: '279',
-    name: '279 - CCR DE PRIMAVERA DO LESTE',
-  },
-  {
-    value: '280',
-    name: '280 - AVISTA S.A. CFI',
-  },
-  {
-    value: '281',
-    name: '281 - CCR COOPAVEL',
-  },
-  {
-    value: '283',
-    name: '283 - RB CAPITAL INVESTIMENTOS DTVM LTDA.',
-  },
-  {
-    value: '285',
-    name: '285 - FRENTE CC LTDA.',
-  },
-  {
-    value: '286',
-    name: '286 - CCR DE OURO',
-  },
-  {
-    value: '288',
-    name: '288 - CAROL DTVM LTDA.',
-  },
-  {
-    value: '289',
-    name: '289 - DECYSEO CC LTDA.',
-  },
-  {
-    value: '290',
-    name: '290 - PAGSEGURO',
-  },
-  {
-    value: '292',
-    name: '292 - BS2 DTVM S.A.',
-  },
-  {
-    value: '293',
-    name: '293 - LASTRO RDV DTVM LTDA',
-  },
-  {
-    value: '296',
-    name: '296 - VISION S.A. CC',
-  },
-  {
-    value: '298',
-    name: '298 - VIPS CC LTDA.',
-  },
-  {
-    value: '299',
-    name: '299 - SOROCRED CFI S.A.',
-  },
-  {
-    value: '300',
-    name: '300 - BCO LA NACION ARGENTINA',
-  },
-  {
-    value: '301',
-    name: '301 - BPP IP S.A.',
-  },
-  {
-    value: '306',
-    name: '306 - PORTOPAR DTVM LTDA',
-  },
-  {
-    value: '307',
-    name: '307 - TERRA INVESTIMENTOS DTVM',
-  },
-  {
-    value: '309',
-    name: '309 - CAMBIONET CC LTDA',
-  },
-  {
-    value: '310',
-    name: '310 - VORTX DTVM LTDA.',
-  },
-  {
-    value: '315',
-    name: '315 - PI DTVM S.A.',
-  },
-  {
-    value: '318',
-    name: '318 - BCO BMG S.A.',
-  },
-  {
-    value: '319',
-    name: '319 - OM DTVM LTDA',
-  },
-  {
-    value: '320',
-    name: '320 - BCO CCB BRASIL S.A.',
-  },
-  {
-    value: '321',
-    name: '321 - CREFAZ SCMEPP LTDA',
-  },
-  {
-    value: '322',
-    name: '322 - CCR DE ABELARDO LUZ',
-  },
-  {
-    value: '323',
-    name: '323 - MERCADO PAGO',
-  },
-  {
-    value: '325',
-    name: '325 - ÓRAMA DTVM S.A.',
-  },
-  {
-    value: '329',
-    name: '329 - QI SCD S.A.',
-  },
-  {
-    value: '330',
-    name: '330 - BANCO BARI S.A.',
-  },
-  {
-    value: '331',
-    name: '331 - FRAM CAPITAL DTVM S.A.',
-  },
-  {
-    value: '332',
-    name: '332 - ACESSO',
-  },
-  {
-    value: '335',
-    name: '335 - BANCO DIGIO',
-  },
-  {
-    value: '336',
-    name: '336 - BCO C6 S.A.',
-  },
-  {
-    value: '340',
-    name: '340 - SUPER PAGAMENTOS E ADMINISTRACAO DE MEIOS ELETRONICOS S.A.',
-  },
-  {
-    value: '341',
-    name: '341 - ITAÚ UNIBANCO S.A.',
-  },
-  {
-    value: '342',
-    name: '342 - CREDITAS SCD',
-  },
-  {
-    value: '343',
-    name: '343 - FFA SCMEPP LTDA.',
-  },
-  {
-    value: '348',
-    name: '348 - BCO XP S.A.',
-  },
-  {
-    value: '349',
-    name: '349 - AMAGGI S.A. CFI',
-  },
-  {
-    value: '352',
-    name: '352 - TORO CTVM LTDA',
-  },
-  {
-    value: '354',
-    name: '354 - NECTON INVESTIMENTOS S.A CVM',
-  },
-  {
-    value: '355',
-    name: '355 - ÓTIMO SCD S.A.',
-  },
-  {
-    value: '364',
-    name: '364 - GERENCIANET PAGAMENTOS DO BRASIL LTDA',
-  },
-  {
-    value: '366',
-    name: '366 - BCO SOCIETE GENERALE BRASIL',
-  },
-  {
-    value: '370',
-    name: '370 - BCO MIZUHO S.A.',
-  },
-  {
-    value: '376',
-    name: '376 - BCO J.P. MORGAN S.A.',
-  },
-  {
-    value: '380',
-    name: '380 - PICPAY SERVICOS S.A.',
-  },
-  {
-    value: '383',
-    name: '383 - JUNO',
-  },
-  {
-    value: '389',
-    name: '389 - BCO MERCANTIL DO BRASIL S.A.',
-  },
-  {
-    value: '394',
-    name: '394 - BCO BRADESCO FINANC. S.A.',
-  },
-  {
-    value: '399',
-    name: '399 - KIRTON BANK',
-  },
-  {
-    value: '403',
-    name: '403 - CORA CDS S.A.',
-  },
-  {
-    value: '412',
-    name: '412 - BCO CAPITAL S.A.',
-  },
-  {
-    value: '422',
-    name: '422 - BCO SAFRA S.A.',
-  },
-  {
-    value: '456',
-    name: '456 - BCO MUFG BRASIL S.A.',
-  },
-  {
-    value: '461',
-    name: '461 - Asaas I.P S.A',
-  },
-  {
-    value: '464',
-    name: '464 - BCO SUMITOMO MITSUI BRASIL S.A.',
-  },
-  {
-    value: '473',
-    name: '473 - BCO CAIXA GERAL BRASIL S.A.',
-  },
-  {
-    value: '477',
-    name: '477 - CITIBANK N.A.',
-  },
-  {
-    value: '479',
-    name: '479 - BCO ITAUBANK S.A.',
-  },
-  {
-    value: '487',
-    name: '487 - DEUTSCHE BANK S.A.BCO ALEMAO',
-  },
-  {
-    value: '488',
-    name: '488 - JPMORGAN CHASE BANK',
-  },
-  {
-    value: '492',
-    name: '492 - ING BANK N.V.',
-  },
-  {
-    value: '495',
-    name: '495 - BCO LA PROVINCIA B AIRES BCE',
-  },
-  {
-    value: '505',
-    name: '505 - BCO CREDIT SUISSE S.A.',
-  },
-  {
-    value: '536',
-    name: '536 - NEON PAGAMENTOS S.A. IP',
-  },
-  {
-    value: '545',
-    name: '545 - SENSO CCVM S.A.',
-  },
-  {
-    value: '600',
-    name: '600 - BCO LUSO BRASILEIRO S.A.',
-  },
-  {
-    value: '604',
-    name: '604 - BCO INDUSTRIAL DO BRASIL S.A.',
-  },
-  {
-    value: '610',
-    name: '610 - BCO VR S.A.',
-  },
-  {
-    value: '611',
-    name: '611 - BCO PAULISTA S.A.',
-  },
-  {
-    value: '612',
-    name: '612 - BCO GUANABARA S.A.',
-  },
-  {
-    value: '613',
-    name: '613 - OMNI BANCO S.A.',
-  },
-  {
-    value: '623',
-    name: '623 - BANCO PAN',
-  },
-  {
-    value: '626',
-    name: '626 - BCO FICSA S.A.',
-  },
-  {
-    value: '630',
-    name: '630 - SMARTBANK',
-  },
-  {
-    value: '633',
-    name: '633 - BCO RENDIMENTO S.A.',
-  },
-  {
-    value: '634',
-    name: '634 - BCO TRIANGULO S.A.',
-  },
-  {
-    value: '637',
-    name: '637 - BCO SOFISA S.A.',
-  },
-  {
-    value: '643',
-    name: '643 - BCO PINE S.A.',
-  },
-  {
-    value: '652',
-    name: '652 - ITAÚ UNIBANCO HOLDING S.A.',
-  },
-  {
-    value: '653',
-    name: '653 - BCO INDUSVAL S.A.',
-  },
-  {
-    value: '654',
-    name: '654 - BCO A.J. RENNER S.A.',
-  },
-  {
-    value: '655',
-    name: '655 - BCO VOTORANTIM S.A.',
-  },
-  {
-    value: '707',
-    name: '707 - BCO DAYCOVAL S.A',
-  },
-  {
-    value: '712',
-    name: '712 - BCO OURINVEST S.A.',
-  },
-  {
-    value: '739',
-    name: '739 - BCO CETELEM S.A.',
-  },
-  {
-    value: '741',
-    name: '741 - BCO RIBEIRAO PRETO S.A.',
-  },
-  {
-    value: '743',
-    name: '743 - BANCO SEMEAR',
-  },
-  {
-    value: '745',
-    name: '745 - BCO CITIBANK S.A.',
-  },
-  {
-    value: '746',
-    name: '746 - BCO MODAL S.A.',
-  },
-  {
-    value: '747',
-    name: '747 - BCO RABOBANK INTL BRASIL S.A.',
-  },
-  {
-    value: '748',
-    name: '748 - BCO COOPERATIVO SICREDI S.A.',
-  },
-  {
-    value: '751',
-    name: '751 - SCOTIABANK BRASIL',
-  },
-  {
-    value: '752',
-    name: '752 - BCO BNP PARIBAS BRASIL S A',
-  },
-  {
-    value: '753',
-    name: '753 - NOVO BCO CONTINENTAL S.A. - BM',
-  },
-  {
-    value: '754',
-    name: '754 - BANCO SISTEMA',
-  },
-  {
-    value: '755',
-    name: '755 - BOFA MERRILL LYNCH BM S.A.',
-  },
-  {
-    value: '756',
-    name: '756 - BANCOOB',
-  },
-  {
-    value: '757',
-    name: '757 - BCO KEB HANA DO BRASIL S.A.',
-  },
-  {
-    value: '000',
-    name: '000 - Banco não informado',
-  },
-  {
-    value: '001',
-    name: '001 - BCO DO BRASIL S.A.',
-  },
-  {
-    value: '003',
-    name: '003 - BCO DA AMAZONIA S.A.',
-  },
-  {
-    value: '004',
-    name: '004 - BCO DO NORDESTE DO BRASIL S.A.',
-  },
-  {
-    value: '007',
-    name: '007 - BNDES',
-  },
-  {
-    value: '010',
-    name: '010 - CREDICOAMO',
-  },
-  {
-    value: '011',
-    name: '011 - C.SUISSE HEDGING-GRIFFO CV S/A',
-  },
-  {
-    value: '012',
-    name: '012 - BANCO INBURSA',
-  },
-  {
-    value: '014',
-    name: '014 - STATE STREET BR S.A. BCO COMERCIAL',
-  },
-  {
-    value: '015',
-    name: '015 - UBS BRASIL CCTVM S.A.',
-  },
-  {
-    value: '016',
-    name: '016 - CCM DESP TRÂNS SC E RS',
-  },
-  {
-    value: '017',
-    name: '017 - BNY MELLON BCO S.A.',
-  },
-  {
-    value: '018',
-    name: '018 - BCO TRICURY S.A.',
-  },
-  {
-    value: '021',
-    name: '021 - BCO BANESTES S.A.',
-  },
-  {
-    value: '024',
-    name: '024 - BCO BANDEPE S.A.',
-  },
-  {
-    value: '025',
-    name: '025 - BCO ALFA S.A.',
-  },
-  {
-    value: '029',
-    name: '029 - BANCO ITAÚ CONSIGNADO S.A.',
-  },
-  {
-    value: '033',
-    name: '033 - BCO SANTANDER (BRASIL) S.A.',
-  },
-  {
-    value: '036',
-    name: '036 - BCO BBI S.A.',
-  },
-  {
-    value: '037',
-    name: '037 - BCO DO EST. DO PA S.A.',
-  },
-  {
-    value: '040',
-    name: '040 - BCO CARGILL S.A.',
-  },
-  {
-    value: '041',
-    name: '041 - BCO DO ESTADO DO RS S.A.',
-  },
-  {
-    value: '047',
-    name: '047 - BCO DO EST. DE SE S.A.',
-  },
-  {
-    value: '060',
-    name: '060 - CONFIDENCE CC S.A.',
-  },
-  {
-    value: '062',
-    name: '062 - HIPERCARD BM S.A.',
-  },
-  {
-    value: '063',
-    name: '063 - BANCO BRADESCARD',
-  },
-  {
-    value: '064',
-    name: '064 - GOLDMAN SACHS DO BRASIL BM S.A',
-  },
-  {
-    value: '065',
-    name: '065 - BCO ANDBANK S.A.',
-  },
-  {
-    value: '066',
-    name: '066 - BCO MORGAN STANLEY S.A.',
-  },
-  {
-    value: '069',
-    name: '069 - BCO CREFISA S.A.',
-  },
-  {
-    value: '070',
-    name: '070 - BRB - BCO DE BRASILIA S.A.',
-  },
-  {
-    value: '074',
-    name: '074 - BCO. J.SAFRA S.A.',
-  },
-  {
-    value: '075',
-    name: '075 - BCO ABN AMRO S.A.',
-  },
-  {
-    value: '076',
-    name: '076 - BCO KDB BRASIL S.A.',
-  },
-  {
-    value: '077',
-    name: '077 - BANCO INTER',
-  },
-  {
-    value: '078',
-    name: '078 - HAITONG BI DO BRASIL S.A.',
-  },
-  {
-    value: '079',
-    name: '079 - BCO ORIGINAL DO AGRO S/A',
-  },
-  {
-    value: '080',
-    name: '080 - B&amp;T CC LTDA.',
-  },
-  {
-    value: '081',
-    name: '081 - BANCOSEGURO S.A.',
-  },
-  {
-    value: '082',
-    name: '082 - BANCO TOPÁZIO S.A.',
-  },
-  {
-    value: '083',
-    name: '083 - BCO DA CHINA BRASIL S.A.',
-  },
-  {
-    value: '084',
-    name: '084 - UNIPRIME NORTE DO PARANÁ - CC',
-  },
-  {
-    value: '085',
-    name: '085 - COOP CENTRAL AILOS',
-  },
-  {
-    value: '089',
-    name: '089 - CCR REG MOGIANA',
-  },
-  {
-    value: '091',
-    name: '091 - CCCM UNICRED CENTRAL RS',
-  },
-  {
-    value: '092',
-    name: '092 - BRK S.A. CFI',
-  },
-  {
-    value: '093',
-    name: '093 - PÓLOCRED SCMEPP LTDA.',
-  },
-  {
-    value: '094',
-    name: '094 - BANCO FINAXIS',
-  },
-  {
-    value: '095',
-    name: '095 - TRAVELEX BANCO DE CÂMBIO S.A.',
-  },
-  {
-    value: '096',
-    name: '096 - BCO B3 S.A.',
-  },
-  {
-    value: '097',
-    name: '097 - CREDISIS CENTRAL DE COOPERATIVAS DE CRÉDITO LTDA.',
-  },
-  {
-    value: '098',
-    name: '098 - CREDIALIANÇA CCR',
-  },
-  {
-    value: '099',
-    name: '099 - UNIPRIME CENTRAL CCC LTDA.',
-  },
+const companyStepSchemas = [
+  // Step 0: Dados da empresa
+  yup.object({
+    name: yup.string().required('Nome da empresa é obrigatório'),
+    email: yup.string().email('Email inválido').required('Email é obrigatório'),
+    password: yup
+      .string()
+      .min(6, 'Mínimo 6 caracteres')
+      .required('Senha obrigatória'),
+    phone: yup.string().required('Celular obrigatório'),
+    document: yup.string().required('CNPJ obrigatório'),
+    trading_name: yup.string().required('Razão social obrigatória'),
+    company_name: yup.string().required('Nome fantasia obrigatório'),
+    annual_revenue: yup.string().required('Receita anual obrigatória'),
+  }),
+
+  // Step 1: Endereço (igual ao individual)
+  yup.object({
+    address: yup.object({
+      zip_code: yup.string().required('CEP obrigatório'),
+      street: yup.string().required('Rua obrigatória'),
+      street_number: yup.string().required('Número obrigatório'),
+      neighborhood: yup.string().required('Bairro obrigatório'),
+      city: yup.string().required('Cidade obrigatória'),
+      state: yup.string().required('Estado obrigatório'),
+    }),
+  }),
+
+  // Step 3: Conta Bancária
+  yup.object({
+    bank_code: yup.string().required('Banco obrigatório'),
+    agencia: yup.string().required('Agência obrigatória'),
+    agencia_dv: yup.string().required('Dígito da agência obrigatório'),
+    conta: yup.string().required('Conta obrigatória'),
+    conta_dv: yup.string().required('Dígito da conta obrigatório'),
+    bank_account: yup.object({
+      document_number: yup
+        .string()
+        .required('Documento do titular obrigatório'),
+      legal_name: yup.string().required('Nome do titular obrigatório'),
+    }),
+  }),
+
+  // Step 2: Sócio administrador
+  yup.object({
+    representative: yup.object({
+      name: yup.string().required('Nome obrigatório'),
+      email: yup.string().email('Email inválido').required('Email obrigatório'),
+      document: yup.string().required('CPF obrigatório'),
+      mother_name: yup.string().required('Nome da mãe obrigatório'),
+      birthdate: yup.string().required('Data de nascimento obrigatória'),
+      monthly_income: yup.string().required('Renda mensal obrigatória'),
+      professional_occupation: yup.string().required('Ocupação obrigatória'),
+      address: yup.object({
+        zip_code: yup.string().required('CEP obrigatório'),
+        street: yup.string().required('Rua obrigatória'),
+        street_number: yup.string().required('Número obrigatório'),
+        neighborhood: yup.string().required('Bairro obrigatório'),
+        city: yup.string().required('Cidade obrigatória'),
+        state: yup.string().required('Estado obrigatório'),
+      }),
+      phone: yup.string().required('Telefone obrigatório'),
+    }),
+  }),
+];
+
+const individualStepSchemas = [
+  // Step 0: Dados pessoais
+  yup.object().shape({
+    barbershopName: yup.string().required('Nome da empresa é obrigatório'),
+    name: yup.string().required('Nome é obrigatório'),
+    email: yup.string().email('Email inválido').required('Email é obrigatório'),
+    password: yup
+      .string()
+      .min(6, 'Mínimo 6 caracteres')
+      .required('Senha obrigatória'),
+    document: yup.string().required('CPF é obrigatório'),
+    phone: yup.string().required('Celular obrigatório'),
+    birth_date: yup.string().required('Data de nascimento obrigatória'),
+    professional_occupation: yup.string().required('Ocupação obrigatória'),
+    monthly_income: yup.string().required('Renda mensal obrigatória'),
+    mother_name: yup.string().required('Nome da mãe obrigatório'),
+  }),
+
+  // Step 1: Endereço
+  yup.object().shape({
+    address: yup.object().shape({
+      zip_code: yup.string().required('CEP obrigatório'),
+      street: yup.string().required('Rua obrigatória'),
+      street_number: yup.string().required('Número obrigatório'),
+      neighborhood: yup.string().required('Bairro obrigatório'),
+      city: yup.string().required('Cidade obrigatória'),
+      state: yup.string().required('Estado obrigatório'),
+    }),
+  }),
+
+  // Step 2: Conta Bancária
+  yup.object().shape({
+    bank_code: yup.string().required('Banco obrigatório'),
+    agencia: yup.string().required('Agência obrigatória'),
+    conta: yup.string().required('Conta obrigatória'),
+    conta_dv: yup.string().required('Dígito obrigatório'),
+    bank_account: yup.object().shape({
+      document_number: yup
+        .string()
+        .required('Documento do titular obrigatório'),
+      legal_name: yup.string().required('Nome do titular obrigatório'),
+    }),
+  }),
 ];
 export default function RegisterInformationForm() {
   const { signIn } = useAuth();
   const [cepBuscado, setCepBuscado] = useState(false);
-
+  const [cepLoading, setCepLoading] = useState(false);
+  const [cepBuscadoRepresentante, setCepBuscadoRepresentante] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
   const [form, setForm] = useState({
+    barbershopName: '',
     name: '',
     email: '',
     trading_name: '',
@@ -1061,12 +225,38 @@ export default function RegisterInformationForm() {
         ];
 
   const [activeStep, setActiveStep] = useState(0);
+  const handleNext = async () => {
+    const isIndividual = form.type === 'individual';
 
-  const handleNext = () => {
-    if (activeStep < steps.length - 1) {
-      setActiveStep((prev) => prev + 1);
-    } else {
-      handleSubmit(); // Último passo envia
+    const currentSchemas = isIndividual
+      ? individualStepSchemas
+      : companyStepSchemas;
+
+    const currentSchema = currentSchemas[activeStep];
+    const isLastStep = activeStep === currentSchemas.length - 1;
+
+    try {
+      await currentSchema.validate(form, { abortEarly: false });
+      setFormErrors({});
+
+      if (isLastStep) {
+        await handleSubmit();
+      } else {
+        setActiveStep((prev) => prev + 1);
+      }
+    } catch (err) {
+      if (err.inner) {
+        const errors = {};
+        err.inner.forEach((e) => {
+          if (e.path && !errors[e.path]) {
+            errors[e.path] = e.message;
+          }
+        });
+        setFormErrors(errors);
+        toast.error('Preencha todos os campos obrigatórios');
+      } else {
+        toast.error('Erro inesperado na validação');
+      }
     }
   };
 
@@ -1132,6 +322,7 @@ export default function RegisterInformationForm() {
     return value;
   }
   const buscarEndereco = async () => {
+    setCepLoading(true);
     const cepLimpo = form.address.zip_code.replace(/\D/g, '');
     if (cepLimpo.length !== 8) {
       alert('Digite um CEP válido com 8 dígitos.');
@@ -1163,10 +354,12 @@ export default function RegisterInformationForm() {
       setCepBuscado(true);
     } catch (err) {
       alert('Erro ao buscar o CEP.');
+    } finally {
+      setCepLoading(false);
     }
   };
   const buscarEnderecoRepresentante = async () => {
-    console.log('buscando endereco representante', form.representative.address);
+    setCepLoading(true);
     const cepLimpo = form?.representative?.address?.zip_code.replace(/\D/g, '');
     if (cepLimpo.length !== 8) {
       alert('Digite um CEP válido com 8 dígitos.');
@@ -1198,9 +391,11 @@ export default function RegisterInformationForm() {
         },
       }));
 
-      setCepBuscado(true);
+      setCepBuscadoRepresentante(true);
     } catch (err) {
       alert('Erro ao buscar o CEP.');
+    } finally {
+      setCepLoading(false);
     }
   };
 
@@ -1214,17 +409,17 @@ export default function RegisterInformationForm() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      const [year, month, day] = form.birth_date.split('/');
       const isIndividual = form.type === 'individual';
 
       const payload = {
+        barbershopName: isIndividual ? form.barbershopName : form.name,
         password: form.password,
         register_information: {
           type: form.type,
-          document: form.document,
+          document: form.document.replace(/\D/g, ''),
           name: form.name,
           email: form.email,
-          phone_numbers: [formatPhoneNumber(form.phone)],
+          phone_numbers: [formatPhoneNumber(form.phone.replace(/\D/g, ''))],
           site_url: null,
           company_name: form.company_name || '',
           trading_name: form.legal_name || '',
@@ -1256,7 +451,7 @@ export default function RegisterInformationForm() {
               {
                 name: form.representative.name,
                 email: form.representative.email,
-                document: form.representative.document,
+                document: form.representative.document.replace(/\D/g, ''),
                 type: 'individual',
                 mother_name: form.representative.mother_name,
                 birth_date: form.representative.birthdate,
@@ -1276,7 +471,11 @@ export default function RegisterInformationForm() {
                   reference_point:
                     form.address.reference_point || 'sem referencia',
                 },
-                phone_numbers: [formatPhoneNumber(form.representative.phone)],
+                phone_numbers: [
+                  formatPhoneNumber(
+                    form.representative.phone.replace(/\D/g, '')
+                  ),
+                ],
               },
             ],
           }),
@@ -1295,7 +494,7 @@ export default function RegisterInformationForm() {
           account_check_digit: form.conta_dv,
           type: 'checking',
           holder_type: form.type,
-          holder_document: form.bank_account.document_number,
+          holder_document: form.bank_account.document_number.replace(/\D/g, ''),
           holder_name: form.bank_account.legal_name,
         },
       };
@@ -1321,10 +520,24 @@ export default function RegisterInformationForm() {
   const handleMoneyChange = (e) => {
     const raw = e.target.value.replace(/\D/g, '');
     const cents = Number(raw);
-    setForm((prev) => ({
-      ...prev,
-      [e.target.name]: isNaN(cents) ? '' : cents,
-    }));
+    const value = isNaN(cents) ? '' : cents;
+
+    const nameParts = e.target.name.split('.');
+    if (nameParts.length === 2) {
+      const [parent, child] = nameParts;
+      setForm((prev) => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value,
+        },
+      }));
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        [e.target.name]: value,
+      }));
+    }
   };
   const slugify = (text: string) =>
     text
@@ -1337,7 +550,6 @@ export default function RegisterInformationForm() {
       .replace(/^-+|-+$/g, ''); // remove hífens extras
   return (
     <Box p={2}>
-      {' '}
       <Typography variant="h5" gutterBottom>
         Tipo de Pessoa
       </Typography>
@@ -1370,9 +582,9 @@ export default function RegisterInformationForm() {
                     <TextField
                       label="CNPJ"
                       fullWidth
+                      error={!!formErrors.document}
+                      helperText={formErrors.document}
                       autoComplete="off"
-                      //  error={!!errors.holder_document}
-                      //  helperText={errors.holder_document}
                       value={form.document}
                       onChange={(e) => {
                         let onlyNumbers = e.target.value.replace(/\D/g, '');
@@ -1407,11 +619,13 @@ export default function RegisterInformationForm() {
                   <Grid item xs={12} sm={6}>
                     <TextField
                       value={form.name}
+                      error={!!formErrors.name}
+                      helperText={formErrors.name}
                       onChange={handleChange}
                       name="name"
                       fullWidth
                       label="Nome da empresa"
-                    />{' '}
+                    />
                     {form.name && (
                       <Typography
                         variant="body2"
@@ -1425,6 +639,8 @@ export default function RegisterInformationForm() {
                     <TextField
                       fullWidth
                       label="Email"
+                      error={!!formErrors.email}
+                      helperText={formErrors.email}
                       value={form.email}
                       onChange={handleChange}
                       name="email"
@@ -1434,6 +650,8 @@ export default function RegisterInformationForm() {
                     <TextField
                       fullWidth
                       label="Senha"
+                      error={!!formErrors.password}
+                      helperText={formErrors.password}
                       value={form.password}
                       onChange={handleChange}
                       name="password"
@@ -1443,8 +661,8 @@ export default function RegisterInformationForm() {
                     <TextField
                       label="Celular"
                       fullWidth
-                      // error={!!errors.phone}
-                      // helperText={errors.phone}
+                      error={!!formErrors.phone}
+                      helperText={formErrors.phone}
                       value={form.phone}
                       onChange={(e) => {
                         let onlyNumbers = e.target.value.replace(/\D/g, '');
@@ -1474,6 +692,8 @@ export default function RegisterInformationForm() {
                     <TextField
                       fullWidth
                       label="Razão Social"
+                      error={!!formErrors.trading_name}
+                      helperText={formErrors.trading_name}
                       value={form.trading_name}
                       onChange={handleChange}
                       name="trading_name"
@@ -1483,6 +703,8 @@ export default function RegisterInformationForm() {
                     <TextField
                       fullWidth
                       label="Nome Fantasia"
+                      error={!!formErrors.company_name}
+                      helperText={formErrors.company_name}
                       value={form.company_name}
                       onChange={handleChange}
                       name="company_name"
@@ -1492,6 +714,8 @@ export default function RegisterInformationForm() {
                     <TextField
                       name="annual_revenue"
                       label="Receita Anual"
+                      error={!!formErrors.annual_revenue}
+                      helperText={formErrors.annual_revenue}
                       value={formatCurrency(form.annual_revenue)}
                       onChange={handleMoneyChange}
                       fullWidth
@@ -1506,10 +730,69 @@ export default function RegisterInformationForm() {
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <TextField
+                      value={form.barbershopName}
+                      onChange={handleChange}
+                      name="barbershopName"
+                      fullWidth
+                      error={!!formErrors.barbershopName}
+                      helperText={formErrors.barbershopName}
+                      label="Nome da empresa"
+                    />
+                    {form.barbershopName && (
+                      <Typography
+                        variant="body2"
+                        sx={{ mt: 0.5, ml: 0.5, color: 'text.secondary' }}
+                      >
+                        Seu link:{' '}
+                        <strong>
+                          {import.meta.env.VITE_APP +
+                            '/' +
+                            slugify(form.barbershopName)}
+                        </strong>
+                      </Typography>
+                    )}
+                  </Grid>{' '}
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Nome"
+                      value={form.name}
+                      onChange={handleChange}
+                      error={!!formErrors.name}
+                      helperText={formErrors.name}
+                      name="name"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Email"
+                      value={form.email}
+                      onChange={handleChange}
+                      error={!!formErrors.email}
+                      helperText={formErrors.email}
+                      name="email"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Senha"
+                      value={form.password}
+                      error={!!formErrors.password}
+                      helperText={formErrors.password}
+                      onChange={handleChange}
+                      name="password"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
                       label="CPF"
                       fullWidth
                       placeholder="Digite o CPF"
                       autoComplete="off"
+                      error={!!formErrors.document}
+                      helperText={formErrors.document}
                       // error={!!errors.document}
                       // helperText={errors.document}
                       value={form.document}
@@ -1538,39 +821,10 @@ export default function RegisterInformationForm() {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
-                      fullWidth
-                      label="Nome"
-                      value={form.name}
-                      onChange={handleChange}
-                      name="name"
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Email"
-                      value={form.email}
-                      onChange={handleChange}
-                      name="email"
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Senha"
-                      value={form.password}
-                      onChange={handleChange}
-                      name="password"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
                       label="Celular"
                       fullWidth
-                      // error={!!errors.phone}
-                      // helperText={errors.phone}
+                      error={!!formErrors.phone}
+                      helperText={formErrors.phone}
                       value={form.phone}
                       onChange={(e) => {
                         let onlyNumbers = e.target.value.replace(/\D/g, '');
@@ -1599,10 +853,13 @@ export default function RegisterInformationForm() {
                     <TextField
                       label="Data de nascimento"
                       fullWidth
+                      error={!!formErrors.birth_date}
+                      helperText={formErrors.birth_date}
+                      name="birth_date"
                       value={formatBirthdate(form.birth_date)}
                       onChange={(e) => {
-                        const onlyNumbers = e.target.value.replace(/\D/g, '');
-                        setForm({ ...form, birth_date: onlyNumbers });
+                        // const onlyNumbers = .replace(/\D/g, '');
+                        setForm({ ...form, birth_date: e.target.value });
                       }}
                       inputProps={{ maxLength: 10 }}
                     />
@@ -1611,6 +868,8 @@ export default function RegisterInformationForm() {
                     <TextField
                       fullWidth
                       label="Ocupação"
+                      error={!!formErrors.professional_occupation}
+                      helperText={formErrors.professional_occupation}
                       value={form.professional_occupation}
                       onChange={handleChange}
                       name="professional_occupation"
@@ -1620,6 +879,8 @@ export default function RegisterInformationForm() {
                     <TextField
                       fullWidth
                       label="Renda Mensal"
+                      error={!!formErrors.monthly_income}
+                      helperText={formErrors.monthly_income}
                       value={formatCurrency(form.monthly_income)}
                       onChange={handleMoneyChange}
                       name="monthly_income"
@@ -1629,6 +890,8 @@ export default function RegisterInformationForm() {
                     <TextField
                       fullWidth
                       label="Nome da Mãe"
+                      error={!!formErrors.mother_name}
+                      helperText={formErrors.mother_name}
                       value={form.mother_name}
                       onChange={handleChange}
                       name="mother_name"
@@ -1649,6 +912,8 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="CEP"
+                    error={!!formErrors.zip_code}
+                    helperText={formErrors.zip_code}
                     value={form.address.zip_code}
                     onChange={handleChange}
                     name="address.zip_code"
@@ -1660,6 +925,7 @@ export default function RegisterInformationForm() {
                     color="primary"
                     fullWidth
                     size="medium"
+                    loading={cepLoading}
                     onClick={buscarEndereco}
                   >
                     Buscar
@@ -1669,6 +935,8 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="Rua"
+                    error={!!formErrors['address.street']}
+                    helperText={formErrors['address.street']}
                     value={form.address.street}
                     onChange={handleChange}
                     name="address.street"
@@ -1680,8 +948,11 @@ export default function RegisterInformationForm() {
                     fullWidth
                     value={form.address.street_number}
                     onChange={handleChange}
+                    error={!!formErrors['address.street_number']}
+                    helperText={formErrors['address.street_number']}
                     name="address.street_number"
                     label="Número"
+                    InputLabelProps={{ shrink: true }}
                     defaultValue="10"
                   />
                 </Grid>
@@ -1689,6 +960,8 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="Complemento"
+                    error={!!formErrors['address.complementary']}
+                    helperText={formErrors['address.complementary']}
                     value={form.address.complementary}
                     onChange={handleChange}
                     name="address.complementary"
@@ -1699,6 +972,8 @@ export default function RegisterInformationForm() {
                     fullWidth
                     label="Bairro"
                     value={form.address.neighborhood}
+                    error={!!formErrors['address.neighborhood']}
+                    helperText={formErrors['address.neighborhood']}
                     onChange={handleChange}
                     name="address.neighborhood"
                   />
@@ -1707,6 +982,8 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="Cidade"
+                    error={!!formErrors['address.city']}
+                    helperText={formErrors['address.city']}
                     value={form.address.city}
                     onChange={handleChange}
                     name="address.city"
@@ -1718,6 +995,8 @@ export default function RegisterInformationForm() {
                     value={form.address.state}
                     onChange={handleChange}
                     name="address.state"
+                    error={!!formErrors['address.state']}
+                    helperText={formErrors['address.state']}
                     label="Estado"
                   />
                 </Grid>
@@ -1726,6 +1005,8 @@ export default function RegisterInformationForm() {
                     fullWidth
                     label="Ponto de Referência"
                     value={form.address.reference_point}
+                    error={!!formErrors['address.reference_point']}
+                    helperText={formErrors['address.reference_point']}
                     onChange={handleChange}
                     name="address.reference_point"
                   />
@@ -1752,7 +1033,13 @@ export default function RegisterInformationForm() {
                       setForm({ ...form, bank_code: newValue?.value || '' })
                     }
                     renderInput={(params) => (
-                      <TextField {...params} label="Banco" />
+                      <TextField
+                        error={!!formErrors['bank_code']}
+                        helperText={formErrors['bank_code']}
+                        {...params}
+                        label="Banco"
+                        name="bank_code"
+                      />
                     )}
                   />
                 </Grid>
@@ -1760,6 +1047,8 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="Agência"
+                    error={!!formErrors['agencia']}
+                    helperText={formErrors['agencia']}
                     value={form.agencia}
                     onChange={handleChange}
                     name="agencia"
@@ -1770,6 +1059,8 @@ export default function RegisterInformationForm() {
                     fullWidth
                     label="Dígito da Agência"
                     value={form.agencia_dv}
+                    error={!!formErrors['agencia_dv']}
+                    helperText={formErrors['agencia_dv']}
                     onChange={handleChange}
                     name="agencia_dv"
                   />
@@ -1778,6 +1069,8 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="Conta"
+                    error={!!formErrors['conta']}
+                    helperText={formErrors['conta']}
                     value={form.conta}
                     onChange={handleChange}
                     name="conta"
@@ -1790,6 +1083,8 @@ export default function RegisterInformationForm() {
                     value={form.conta_dv}
                     onChange={handleChange}
                     name="conta_dv"
+                    error={!!formErrors['conta_dv']}
+                    helperText={formErrors['conta_dv']}
                   />
                 </Grid>
 
@@ -1800,6 +1095,8 @@ export default function RegisterInformationForm() {
                     onChange={handleChange}
                     name="bank_account.document_number"
                     value={form.bank_account.document_number}
+                    error={!!formErrors['bank_account.document_number']}
+                    helperText={formErrors['bank_account.document_number']}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -1809,9 +1106,11 @@ export default function RegisterInformationForm() {
                     value={form.bank_account.legal_name}
                     onChange={handleChange}
                     name="bank_account.legal_name"
+                    error={!!formErrors['bank_account.legal_name']}
+                    helperText={formErrors['bank_account.legal_name']}
                   />
                 </Grid>
-              </Grid>{' '}
+              </Grid>
             </Paper>
           }
         </Box>
@@ -1828,6 +1127,8 @@ export default function RegisterInformationForm() {
                     value={form.representative.name}
                     onChange={handleChange}
                     name="representative.name"
+                    error={!!formErrors['representative.name']}
+                    helperText={formErrors['representative.name']}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -1837,6 +1138,8 @@ export default function RegisterInformationForm() {
                     value={form.representative.email}
                     onChange={handleChange}
                     name="representative.email"
+                    error={!!formErrors['representative.email']}
+                    helperText={formErrors['representative.email']}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -1846,6 +1149,8 @@ export default function RegisterInformationForm() {
                     value={form.representative.document}
                     onChange={handleChange}
                     name="representative.document"
+                    error={!!formErrors['representative.document']}
+                    helperText={formErrors['representative.document']}
                   />
                 </Grid>
 
@@ -1856,15 +1161,20 @@ export default function RegisterInformationForm() {
                     value={form.representative.mother_name}
                     onChange={handleChange}
                     name="representative.mother_name"
+                    error={!!formErrors['representative.mother_name']}
+                    helperText={formErrors['representative.mother_name']}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
                     label="Data de nascimento"
                     fullWidth
+                    name="representative.birthdate"
+                    error={!!formErrors['representative.birthdate']}
+                    helperText={formErrors['representative.birthdate']}
                     value={formatBirthdate(form.representative.birthdate)}
                     onChange={(e) => {
-                      const onlyNumbers = e.target.value.replace(/\D/g, '');
+                      const onlyNumbers = e.target.value;
                       setForm({
                         ...form,
                         representative: {
@@ -1880,6 +1190,8 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="Renda Mensal"
+                    error={!!formErrors['representative.monthly_income']}
+                    helperText={formErrors['representative.monthly_income']}
                     onChange={handleMoneyChange}
                     value={formatCurrency(form.representative.monthly_income)}
                     name="representative.monthly_income"
@@ -1891,20 +1203,15 @@ export default function RegisterInformationForm() {
                     label="Ocupação"
                     value={form.representative.professional_occupation}
                     onChange={handleChange}
+                    error={
+                      !!formErrors['representative.professional_occupation']
+                    }
+                    helperText={
+                      formErrors['representative.professional_occupation']
+                    }
                     name="representative.professional_occupation"
                   />
                 </Grid>
-                {/* <Grid item xs={12}>
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked={false} />}
-                    label="Representante Legal Autodeclarado"
-                    value={
-                      form.representative.self_declared_legal_representative
-                    }
-                    onChange={handleChange}
-                    name="representative.self_declared_legal_representative"
-                  />
-                </Grid> */}
               </Grid>
 
               <Typography variant="subtitle1" gutterBottom mt={2}>
@@ -1918,6 +1225,8 @@ export default function RegisterInformationForm() {
                     value={form.representative.address.zip_code}
                     onChange={handleChange}
                     name="representative.address.zip_code"
+                    error={!!formErrors['representative.address.zip_code']}
+                    helperText={formErrors['representative.address.zip_code']}
                   />
                 </Grid>
                 <Grid item xs={4}>
@@ -1926,7 +1235,7 @@ export default function RegisterInformationForm() {
                     color="primary"
                     fullWidth
                     size="medium"
-                    loading={cepBuscado}
+                    loading={cepLoading}
                     onClick={buscarEnderecoRepresentante}
                   >
                     Buscar
@@ -1936,6 +1245,8 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="Rua"
+                    error={!!formErrors['representative.address.street']}
+                    helperText={formErrors['representative.address.street']}
                     value={form.representative.address.street}
                     onChange={handleChange}
                     name="representative.address.street"
@@ -1947,6 +1258,10 @@ export default function RegisterInformationForm() {
                     label="Número"
                     value={form.representative.address.street_number}
                     onChange={handleChange}
+                    error={!!formErrors['representative.address.street_number']}
+                    helperText={
+                      formErrors['representative.address.street_number']
+                    }
                     name="representative.address.street_number"
                     defaultValue="10"
                   />
@@ -1958,7 +1273,10 @@ export default function RegisterInformationForm() {
                     onChange={handleChange}
                     name="representative.address.complementary"
                     label="Complemento"
-                    defaultValue="com"
+                    error={!!formErrors['representative.address.complementary']}
+                    helperText={
+                      formErrors['representative.address.complementary']
+                    }
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -1968,6 +1286,10 @@ export default function RegisterInformationForm() {
                     value={form.representative.address.neighborhood}
                     onChange={handleChange}
                     name="representative.address.neighborhood"
+                    error={!!formErrors['representative.address.neighborhood']}
+                    helperText={
+                      formErrors['representative.address.neighborhood']
+                    }
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -1977,6 +1299,8 @@ export default function RegisterInformationForm() {
                     value={form.representative.address.city}
                     onChange={handleChange}
                     name="representative.address.city"
+                    error={!!formErrors['representative.address.city']}
+                    helperText={formErrors['representative.address.city']}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -1986,6 +1310,8 @@ export default function RegisterInformationForm() {
                     value={form.representative.address.state}
                     onChange={handleChange}
                     name="representative.address.state"
+                    error={!!formErrors['representative.address.state']}
+                    helperText={formErrors['representative.address.state']}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -1995,6 +1321,12 @@ export default function RegisterInformationForm() {
                     value={form.representative.address.reference_point}
                     onChange={handleChange}
                     name="representative.address.reference_point"
+                    error={
+                      !!formErrors['representative.address.reference_point']
+                    }
+                    helperText={
+                      formErrors['representative.address.reference_point']
+                    }
                   />
                 </Grid>
               </Grid>
@@ -2009,8 +1341,8 @@ export default function RegisterInformationForm() {
                     fullWidth
                     margin="normal"
                     size="small"
-                    // error={!!errors.phone}
-                    // helperText={errors.phone}
+                    error={!!formErrors['representative.phone']}
+                    helperText={formErrors['representative.phone']}
                     value={form.representative.phone}
                     onChange={(e) => {
                       let onlyNumbers = e.target.value.replace(/\D/g, '');
