@@ -3,16 +3,16 @@ import { createTheme } from '@mui/material/styles';
 export const theme = createTheme({
   palette: {
     primary: {
-      main: '#312e38',
-      light: '#333333',
-      dark: '#000000',
-      contrastText: '#FFFFFF',
+      main: '#101F2C', // Azul-marinho profundo — base sólida, tecnológica
+      light: '#333C4A', // Azul acinzentado mais claro, ótimo para fundo ou hover
+      dark: '#0B1621', // Um azul ainda mais escuro, quase preto
+      contrastText: '#FFFFFF', // Branco para garantir boa leitura
     },
     secondary: {
-      main: '#D4AF37',
-      light: '#FFD700',
-      dark: '#B8860B',
-      contrastText: '#000000',
+      main: '#FF671D', // Laranja escuro vibrante — agora como cor principal
+      light: '#FFA05E', // Versão mais clara e suave do laranja
+      dark: '#C74300', // Um tom ainda mais profundo e queimado do laranja
+      contrastText: '#FFFFFF', // Branco para contraste em fundo escuro
     },
   },
   typography: {

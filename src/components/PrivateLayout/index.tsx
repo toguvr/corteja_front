@@ -216,7 +216,7 @@ export default function PrivateLayout({
             component="div"
             sx={{ display: { xs: 'none', sm: 'block' } }}
           >
-            CorteJa
+            HoraCerta
           </Typography>
 
           <Box sx={{ flexGrow: 1 }} />

@@ -27,7 +27,7 @@ export const LogoIcon = styled.img`
 `;
 export const LeftSection = styled.div`
   flex: 1;
-  background-color: ${theme.palette.primary.main};
+  background-color: #2c3943;
   display: flex;
   flex-direction: column;
   justify-content: center;
