@@ -220,8 +220,8 @@ export default function RegisterInformationForm() {
       : [
           'Dados da Barbearia',
           'Endereço',
-          'Sócio Administrador',
           'Conta Bancária',
+          'Sócio Administrador',
         ];
 
   const [activeStep, setActiveStep] = useState(0);
@@ -440,7 +440,7 @@ export default function RegisterInformationForm() {
             zip_code: form.address.zip_code,
             reference_point: form.address.reference_point || 'sem referencia',
           },
-          ...(form.type === 'company' && {
+          ...(form.type === 'corporation' && {
             main_address: {
               street: form.address.street,
               complementary: form.address.complementary || 'sem complemento',
@@ -567,7 +567,7 @@ export default function RegisterInformationForm() {
           label="Tipo"
           onChange={(e) => setForm({ ...form, type: e.target.value })}
         >
-          <MenuItem value="company">Pessoa Jurídica</MenuItem>
+          <MenuItem value="corporation">Pessoa Jurídica</MenuItem>
           <MenuItem value="individual">Pessoa Física</MenuItem>
         </Select>
       </FormControl>
@@ -580,7 +580,7 @@ export default function RegisterInformationForm() {
       </Stepper>
       {activeStep === 0 && (
         <Box>
-          {form.type === 'company' ? (
+          {form.type === 'corporation' ? (
             <>
               <Paper variant="outlined" sx={{ p: 2, mb: 4 }}>
                 <Grid container spacing={2}>
