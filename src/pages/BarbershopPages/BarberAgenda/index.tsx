@@ -7,8 +7,6 @@ import {
   ListItemText,
   Divider,
   Paper,
-  useMediaQuery,
-  Avatar,
   Chip,
   TextField,
   MenuItem,
@@ -16,9 +14,7 @@ import {
 } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
-import { useTheme } from '@mui/material/styles';
 import api from '../../../services/api';
-import BarbershopPrivateLayout from '../../../components/BarbershopPrivateLayout';
 import { useBarbershop } from '../../../hooks/barbershop';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 interface Appointment {
@@ -34,8 +30,6 @@ interface Appointment {
 }
 
 export default function BarberAgenda() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { barbershop } = useBarbershop();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
