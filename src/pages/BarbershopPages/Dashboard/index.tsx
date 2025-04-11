@@ -33,7 +33,7 @@ export default function BarbershopDashboard() {
   const navigate = useNavigate();
   const { services } = useBarbershopServices();
   const { barbershop } = useBarbershop();
-  const barbershopLink = `${import.meta.env.VITE_APP}/agenda/${barbershop?.slug}`;
+  const barbershopLink = `${import.meta.env.VITE_APP}/agendar/${barbershop?.slug}`;
   const [barbers, setBarbers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState({
