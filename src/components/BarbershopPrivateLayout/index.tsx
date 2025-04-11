@@ -36,6 +36,8 @@ import ContentCutIcon from '@mui/icons-material/ContentCut';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { toast } from 'react-toastify';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import BookOnlineIcon from '@mui/icons-material/BookOnline';
+
 const drawerWidth = 240;
 
 const menuItems = [
@@ -45,15 +47,20 @@ const menuItems = [
     page: '/empresa/dashboard',
   },
   {
+    label: 'Agenda',
+    icon: <BookOnlineIcon />,
+    page: '/empresa/agenda',
+  },
+  {
     label: 'Barbeiros',
     icon: <PeopleIcon />,
     page: '/empresa/profissionais',
   },
-  {
-    label: 'Fidelidade',
-    icon: <CardGiftcardIcon />,
-    page: '/empresa/agenda',
-  },
+  // {
+  //   label: 'Fidelidade',
+  //   icon: <CardGiftcardIcon />,
+  //   page: '/empresa/agenda',
+  // },
   {
     label: 'Horários',
     icon: <AccessTimeIcon />,
