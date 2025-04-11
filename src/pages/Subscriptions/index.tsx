@@ -59,7 +59,7 @@ export default function Assinaturas() {
   const [schedules, setSchedules] = useState([]);
   const [selectedScheduleId, setSelectedScheduleId] = useState('');
   const [selectedBarberId, setSelectedBarberId] = useState('');
-  const [selectedCardId, setSelectedCardId] = useState(cards[0]?.id);
+  const [selectedCardId, setSelectedCardId] = useState('');
   const [barbers, setBarbers] = useState([]);
   const [openCardDialog, setOpenCardDialog] = useState(false);
   const [loadingConfirmSubscription, setLoadingConfirmSubscription] =
@@ -95,6 +95,14 @@ export default function Assinaturas() {
       });
     }
   }, [barbershop?.id]);
+
+  useEffect(() => {
+    if (barbershop?.id) {
+      if (!!cards.length) {
+        setSelectedCardId(cards[0]?.id);
+      }
+    }
+  }, [barbershop?.id, cards.length]);
 
   const handleSelectSchedule = (schedule) => {
     setSelectedScheduleId((prev) => schedule.id);

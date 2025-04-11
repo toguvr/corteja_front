@@ -8,6 +8,8 @@ interface Schedule {
   barbershopId: string;
   createdAt: Date;
   updatedAt: Date;
+  appointments?: { date: string }[];
+  subscriptions?: { active: boolean }[];
 }
 
 interface ScheduleListProps {
@@ -30,17 +32,12 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
   onSelectTime,
   selectedScheduleId,
 }) => {
-  const selectedWeekDay = selectedDate.getDay(); // número de 0 a 6
+  const selectedWeekDay = selectedDate.getDay();
 
-  // Filtrar e ordenar os horários do dia selecionado
   const filtered = schedules
     .filter((s) => Number(s.weekDay) === selectedWeekDay && s.time)
-    .sort((a, b) => {
-      if (!a.time || !b.time) return 0;
-      return a.time.localeCompare(b.time);
-    });
+    .sort((a, b) => (a.time && b.time ? a.time.localeCompare(b.time) : 0));
 
-  // Agrupar por período
   const grouped: Record<string, Schedule[]> = {
     Madrugada: [],
     Manhã: [],
@@ -50,51 +47,63 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
 
   filtered.forEach((s) => {
     if (!s.time) return;
-    const [hourStr] = s.time.split(':');
-    const hour = parseInt(hourStr, 10);
-    const period = getPeriod(hour);
-    grouped[period].push(s);
+    const hour = parseInt(s.time.split(':')[0], 10);
+    grouped[getPeriod(hour)].push(s);
   });
+
+  const now = new Date();
 
   return (
     <Box mt={3} pb={10}>
       {(['Madrugada', 'Manhã', 'Tarde', 'Noite'] as const).map((period) =>
-        grouped[period].length > 0 ? (
+        grouped[period].length ? (
           <Box key={period} mb={2}>
             <Typography variant="subtitle1" gutterBottom>
               {period}
             </Typography>
             <Grid container spacing={1}>
-              {grouped[period].map((s) => (
-                <Grid item key={s.id}>
-                  <Button
-                    variant={
-                      selectedScheduleId === s.id ? 'contained' : 'outlined'
-                    }
-                    disabled={
-                      selectedScheduleId !== s.id &&
-                      !!s.limit &&
-                      ((Array.isArray(s.appointments) &&
-                        s.appointments.filter((a) => {
-                          const aDate = new Date(a.date);
-                          return (
-                            aDate.getFullYear() ===
-                              selectedDate.getFullYear() &&
-                            aDate.getMonth() === selectedDate.getMonth() &&
-                            aDate.getDate() === selectedDate.getDate()
-                          );
-                        }).length >= s.limit) ||
-                        (Array.isArray(s.appointments) &&
-                          s.subscriptions.filter((sub) => sub.active).length >=
-                            s.limit))
-                    }
-                    onClick={() => onSelectTime?.(s)}
-                    sx={{ minWidth: 80 }}
-                  >
-                    {s.time}
-                  </Button>
-                </Grid>
-              ))}
+              {grouped[period].map((s) => {
+                const [hour, minute] = s.time!.split(':').map(Number);
+                const scheduleDateTime = new Date(selectedDate);
+                scheduleDateTime.setHours(hour, minute, 0, 0);
+
+                const isPast = scheduleDateTime < now;
+
+                const appointmentsToday = s.appointments?.filter((a) => {
+                  const aDate = new Date(a.date);
+                  return (
+                    aDate.getFullYear() === selectedDate.getFullYear() &&
+                    aDate.getMonth() === selectedDate.getMonth() &&
+                    aDate.getDate() === selectedDate.getDate()
+                  );
+                }).length;
+
+                const activeSubscriptions = s.subscriptions?.filter(
+                  (sub) => sub.active
+                ).length;
+
+                const limitReached =
+                  !!s.limit &&
+                  ((appointmentsToday ?? 0) >= s.limit ||
+                    (activeSubscriptions ?? 0) >= s.limit);
+
+                return (
+                  <Grid item key={s.id}>
+                    <Button
+                      variant={
+                        selectedScheduleId === s.id ? 'contained' : 'outlined'
+                      }
+                      disabled={
+                        isPast || (selectedScheduleId !== s.id && limitReached)
+                      }
+                      onClick={() => onSelectTime?.(s)}
+                      sx={{ minWidth: 80 }}
+                    >
+                      {s.time}
+                    </Button>
+                  </Grid>
+                );
+              })}
             </Grid>
           </Box>
         ) : null

@@ -163,6 +163,7 @@ export default function CardDialog({
                 <TextField
                   fullWidth
                   label="CEP"
+                  InputLabelProps={{ shrink: true }}
                   name="zipCode"
                   value={form.zipCode}
                   onChange={handleInputChange}
@@ -173,7 +174,6 @@ export default function CardDialog({
                   variant="outlined"
                   color="primary"
                   fullWidth
-                  size="medium"
                   onClick={buscarEndereco}
                 >
                   Buscar
@@ -183,6 +183,7 @@ export default function CardDialog({
                 <TextField
                   fullWidth
                   label="Rua"
+                  InputLabelProps={{ shrink: true }}
                   name="street"
                   value={form.street}
                   onChange={handleInputChange}
@@ -194,6 +195,7 @@ export default function CardDialog({
                   fullWidth
                   label="Número"
                   name="street_number"
+                  InputLabelProps={{ shrink: true }}
                   value={form.street_number}
                   onChange={handleInputChange}
                 />
@@ -204,6 +206,7 @@ export default function CardDialog({
                   label="Bairro"
                   name="neighborhood"
                   value={form.neighborhood}
+                  InputLabelProps={{ shrink: true }}
                   onChange={handleInputChange}
                   disabled={!cepBuscado}
                 />
@@ -214,6 +217,7 @@ export default function CardDialog({
                   label="Complemento"
                   name="complementary"
                   value={form.complementary}
+                  InputLabelProps={{ shrink: true }}
                   onChange={handleInputChange}
                 />
               </Grid>
@@ -221,6 +225,7 @@ export default function CardDialog({
                 <TextField
                   fullWidth
                   label="Ponto de Referência"
+                  InputLabelProps={{ shrink: true }}
                   name="referencePoint"
                   value={form.referencePoint}
                   onChange={handleInputChange}
@@ -233,6 +238,7 @@ export default function CardDialog({
                   name="city"
                   value={form.city}
                   onChange={handleInputChange}
+                  InputLabelProps={{ shrink: true }}
                   disabled={!cepBuscado}
                 />
               </Grid>
@@ -243,6 +249,7 @@ export default function CardDialog({
                   name="state"
                   value={form.state}
                   onChange={handleInputChange}
+                  InputLabelProps={{ shrink: true }}
                   disabled={!cepBuscado}
                 />
               </Grid>
@@ -257,7 +264,7 @@ export default function CardDialog({
               name={form.name}
               expiry={form.expiry}
               cvc={form.cvc}
-              focused={form.focus}
+              focuss={form.focus}
             />
 
             <TextField

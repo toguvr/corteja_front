@@ -922,6 +922,7 @@ export default function RegisterInformationForm() {
                     value={form.address.zip_code}
                     onChange={handleChange}
                     name="address.zip_code"
+                    InputLabelProps={{ shrink: true }}
                   />
                 </Grid>
                 <Grid item xs={4}>
@@ -929,7 +930,6 @@ export default function RegisterInformationForm() {
                     variant="outlined"
                     color="primary"
                     fullWidth
-                    size="medium"
                     loading={cepLoading}
                     onClick={buscarEndereco}
                   >
@@ -969,6 +969,7 @@ export default function RegisterInformationForm() {
                     helperText={formErrors['address.complementary']}
                     value={form.address.complementary}
                     onChange={handleChange}
+                    InputLabelProps={{ shrink: true }}
                     name="address.complementary"
                   />
                 </Grid>
@@ -977,6 +978,7 @@ export default function RegisterInformationForm() {
                     fullWidth
                     label="Bairro"
                     value={form.address.neighborhood}
+                    InputLabelProps={{ shrink: true }}
                     error={!!formErrors['address.neighborhood']}
                     helperText={formErrors['address.neighborhood']}
                     onChange={handleChange}
@@ -991,6 +993,7 @@ export default function RegisterInformationForm() {
                     helperText={formErrors['address.city']}
                     value={form.address.city}
                     onChange={handleChange}
+                    InputLabelProps={{ shrink: true }}
                     name="address.city"
                   />
                 </Grid>
@@ -1000,6 +1003,7 @@ export default function RegisterInformationForm() {
                     value={form.address.state}
                     onChange={handleChange}
                     name="address.state"
+                    InputLabelProps={{ shrink: true }}
                     error={!!formErrors['address.state']}
                     helperText={formErrors['address.state']}
                     label="Estado"
@@ -1009,6 +1013,7 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="Ponto de Referência"
+                    InputLabelProps={{ shrink: true }}
                     value={form.address.reference_point}
                     error={!!formErrors['address.reference_point']}
                     helperText={formErrors['address.reference_point']}
@@ -1227,6 +1232,7 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="CEP"
+                    InputLabelProps={{ shrink: true }}
                     value={form.representative.address.zip_code}
                     onChange={handleChange}
                     name="representative.address.zip_code"
@@ -1239,7 +1245,6 @@ export default function RegisterInformationForm() {
                     variant="outlined"
                     color="primary"
                     fullWidth
-                    size="medium"
                     loading={cepLoading}
                     onClick={buscarEnderecoRepresentante}
                   >
@@ -1250,6 +1255,7 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="Rua"
+                    InputLabelProps={{ shrink: true }}
                     error={!!formErrors['representative.address.street']}
                     helperText={formErrors['representative.address.street']}
                     value={form.representative.address.street}
@@ -1263,6 +1269,7 @@ export default function RegisterInformationForm() {
                     label="Número"
                     value={form.representative.address.street_number}
                     onChange={handleChange}
+                    InputLabelProps={{ shrink: true }}
                     error={!!formErrors['representative.address.street_number']}
                     helperText={
                       formErrors['representative.address.street_number']
@@ -1278,6 +1285,7 @@ export default function RegisterInformationForm() {
                     onChange={handleChange}
                     name="representative.address.complementary"
                     label="Complemento"
+                    InputLabelProps={{ shrink: true }}
                     error={!!formErrors['representative.address.complementary']}
                     helperText={
                       formErrors['representative.address.complementary']
@@ -1288,6 +1296,7 @@ export default function RegisterInformationForm() {
                   <TextField
                     fullWidth
                     label="Bairro"
+                    InputLabelProps={{ shrink: true }}
                     value={form.representative.address.neighborhood}
                     onChange={handleChange}
                     name="representative.address.neighborhood"
@@ -1303,6 +1312,7 @@ export default function RegisterInformationForm() {
                     label="Cidade"
                     value={form.representative.address.city}
                     onChange={handleChange}
+                    InputLabelProps={{ shrink: true }}
                     name="representative.address.city"
                     error={!!formErrors['representative.address.city']}
                     helperText={formErrors['representative.address.city']}
@@ -1314,6 +1324,7 @@ export default function RegisterInformationForm() {
                     label="Estado"
                     value={form.representative.address.state}
                     onChange={handleChange}
+                    InputLabelProps={{ shrink: true }}
                     name="representative.address.state"
                     error={!!formErrors['representative.address.state']}
                     helperText={formErrors['representative.address.state']}
@@ -1325,6 +1336,7 @@ export default function RegisterInformationForm() {
                     label="Ponto de Referência"
                     value={form.representative.address.reference_point}
                     onChange={handleChange}
+                    InputLabelProps={{ shrink: true }}
                     name="representative.address.reference_point"
                     error={
                       !!formErrors['representative.address.reference_point']

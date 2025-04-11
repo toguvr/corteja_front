@@ -225,7 +225,7 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
             onClick={handleNext}
             disabled={activeStep === 0 && !selectedScheduleId}
           >
-            'Próximo'
+            Próximo
           </Button>
         )}
       </DialogActions>
