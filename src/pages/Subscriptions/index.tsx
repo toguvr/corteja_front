@@ -283,9 +283,11 @@ export default function Assinaturas() {
                   </Grid>
                 ))
               ) : (
-                <Typography gutterBottom mt={2}>
-                  Você ainda não tem nenhuma assinatura.
-                </Typography>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Typography gutterBottom mt={2}>
+                    Você ainda não tem nenhuma assinatura.
+                  </Typography>
+                </Grid>
               )}
             </Grid>
 
