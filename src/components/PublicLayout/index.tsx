@@ -20,7 +20,7 @@ const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
       <LeftSectionMobile></LeftSectionMobile>
 
       <LeftSection>
-        <Box component="img" src={BackLogo} alt="logo nossonutri" />
+        <Box component="img" width={400} src={BackLogo} alt="logo nossonutri" />
       </LeftSection>
 
       <RightSection>

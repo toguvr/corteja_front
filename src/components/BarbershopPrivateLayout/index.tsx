@@ -127,6 +127,7 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })<AppBarProps>(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
+  backgroundColor: theme.palette.primary.main,
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -261,7 +262,7 @@ export default function BarbershopPrivateLayout({
 
           <Box sx={{ flexGrow: 1 }} />
           <Box>
-            <IconButton
+            {/* <IconButton
               onClick={() => {
                 const link = `https://app.com/${user.slug}`;
                 navigator.clipboard.writeText(link);
@@ -272,7 +273,7 @@ export default function BarbershopPrivateLayout({
               <Tooltip title="Copiar link da barbearia">
                 <ContentCopyIcon />
               </Tooltip>
-            </IconButton>
+            </IconButton> */}
           </Box>
         </Toolbar>
       </AppBar>

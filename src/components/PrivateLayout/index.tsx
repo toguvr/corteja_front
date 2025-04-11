@@ -47,7 +47,7 @@ const menuItemsBottom = [
     page: '/extrato',
   },
 
-  { label: 'Perfil', icon: <PersonIcon />, page: '/perfil' },
+  // { label: 'Perfil', icon: <PersonIcon />, page: '/perfil' },
   { label: 'Sair', icon: <LogoutIcon /> },
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -87,6 +87,8 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })<AppBarProps>(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
+  backgroundColor: theme.palette.primary.main,
+
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,

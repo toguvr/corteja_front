@@ -25,6 +25,7 @@ import { useUserCards } from '../../hooks/cards';
 import CardDialog from './CardDialog';
 import { SubscriptionDto } from '../../dtos';
 import { toast } from 'react-toastify';
+import { useBalance } from '../../hooks/balance';
 
 interface Subscription {
   id: string;
@@ -49,6 +50,7 @@ interface Plan {
 export default function Assinaturas() {
   const { barbershop } = useBarbershop();
   const { cards } = useUserCards();
+  const { fetchBalance } = useBalance();
   const [assinaturas, setAssinaturas] = useState<SubscriptionDto[]>([]);
   const [planos, setPlanos] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
@@ -180,8 +182,8 @@ export default function Assinaturas() {
 
   useEffect(() => {
     if (barbershop?.id) {
-      Promise.all([loadAssinaturas(), loadPlanos()]).finally(() =>
-        setLoading(false)
+      Promise.all([loadAssinaturas(), loadPlanos(), fetchBalance()]).finally(
+        () => setLoading(false)
       );
     }
   }, [barbershop?.id]);
