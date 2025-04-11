@@ -64,6 +64,7 @@ export const ForgotBarbershopPassword = () => {
         label="Email"
         id="email"
         size="small"
+        margin="normal"
         fullWidth
         onChange={(e) => setEmail(e.target.value)}
         value={email}

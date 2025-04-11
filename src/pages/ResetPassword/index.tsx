@@ -73,6 +73,7 @@ export const ResetPassword = () => {
       <TextField
         label="Senha"
         id="password"
+        margin="normal"
         size="small"
         fullWidth
         type="password"
@@ -93,6 +94,7 @@ export const ResetPassword = () => {
       />
 
       <TextField
+        margin="normal"
         label="Confirmar Senha"
         id="confirmPassword"
         size="small"

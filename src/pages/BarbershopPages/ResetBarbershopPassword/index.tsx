@@ -74,6 +74,7 @@ export const ResetBarbershopPassword = () => {
         label="Senha"
         id="password"
         size="small"
+        margin="normal"
         fullWidth
         type="password"
         onChange={(e) => setValues({ ...values, password: e.target.value })}
@@ -96,6 +97,7 @@ export const ResetBarbershopPassword = () => {
         label="Confirmar Senha"
         id="confirmPassword"
         size="small"
+        margin="normal"
         fullWidth
         type="password"
         onChange={(e) =>
