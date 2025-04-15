@@ -19,7 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { Avatar, Button, Menu, MenuItem } from '@mui/material';
 import { useAuth } from '../../hooks/auth';
 import PurchaseDialog from '../PurchaseDialog';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { key } from '../../config/key';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import { useBalance } from '../../hooks/balance';
@@ -140,6 +140,7 @@ export default function PrivateLayout({
 }) {
   const navigate = useNavigate();
   const slug = localStorage.getItem(key.slug);
+  const location = useLocation();
 
   const { user, signOut } = useAuth();
   const { balance } = useBalance();
@@ -256,6 +257,7 @@ export default function PrivateLayout({
           {menuItems.map((item, index) => (
             <ListItem key={item.label} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
+                selected={location.pathname === item.page}
                 onClick={
                   item.page ? () => navigate(item.page + '/' + slug) : signOut
                 }
@@ -311,6 +313,7 @@ export default function PrivateLayout({
           {menuItemsBottom.map((item, index) => (
             <ListItem key={item.label} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
+                selected={location.pathname === item.page}
                 onClick={item.page ? () => navigate(item.page) : signOut}
                 sx={[
                   {

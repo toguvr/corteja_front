@@ -59,7 +59,6 @@ export default function RecipientBalancePage() {
           <Grid item xs={12}>
             <Typography variant="subtitle1">Saldo Disponível</Typography>
             <Typography variant="h6">
-              R${' '}
               {(balance?.available_amount / 100).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
@@ -72,7 +71,6 @@ export default function RecipientBalancePage() {
               A Receber (Próximos dias)
             </Typography>
             <Typography variant="h6">
-              R${' '}
               {(balance?.waiting_funds_amount / 100).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
@@ -83,7 +81,6 @@ export default function RecipientBalancePage() {
           <Grid item xs={12}>
             <Typography variant="subtitle1">Saldo Transferido</Typography>
             <Typography variant="h6">
-              R${' '}
               {(balance?.transferred_amount / 100).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',

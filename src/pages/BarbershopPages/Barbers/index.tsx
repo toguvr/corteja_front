@@ -29,16 +29,22 @@ export default function BarbersManagementPage() {
     name: '',
     barbershopId: barbershop?.id,
   });
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetchBarbers();
   }, [barbershop?.id]);
 
   const fetchBarbers = async () => {
     if (barbershop?.id) {
-      api.get(`/barbers/barbershop/${barbershop?.id}`).then(({ data }) => {
+      setLoading(true);
+      try {
+        const { data } = await api.get(`/barbers/barbershop/${barbershop.id}`);
         setBarbers(data);
-      });
+      } catch (err) {
+        console.error('Erro ao carregar barbeiros', err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -93,31 +99,43 @@ export default function BarbersManagementPage() {
         mb={2}
       >
         <Typography variant="h5">Profissionais</Typography>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={() => handleOpen()}
-        >
-          Novo
-        </Button>
+        {!loading && (
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => handleOpen()}
+            disabled={barbers.length > 0}
+          >
+            Novo
+          </Button>
+        )}
       </Box>
-      <Grid container spacing={2}>
-        {barbers.map((barber) => (
-          <Grid item xs={12} sm={6} md={4} key={barber.id}>
-            <Paper elevation={3} style={{ padding: 16, position: 'relative' }}>
-              <Typography variant="h6">{barber.name}</Typography>
-              <Box position="absolute" top={8} right={8}>
-                <IconButton onClick={() => handleOpen(barber)}>
-                  <Edit />
-                </IconButton>
-                <IconButton onClick={() => handleDeleteClick(barber)}>
-                  <Delete />
-                </IconButton>
-              </Box>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
+      {loading ? (
+        <Box display="flex" justifyContent="center" mt={4}>
+          <Typography variant="body1">Carregando profissionais...</Typography>
+        </Box>
+      ) : (
+        <Grid container spacing={2}>
+          {barbers.map((barber) => (
+            <Grid item xs={12} sm={6} md={4} key={barber.id}>
+              <Paper
+                elevation={3}
+                style={{ padding: 16, position: 'relative' }}
+              >
+                <Typography variant="h6">{barber.name}</Typography>
+                <Box position="absolute" top={8} right={8}>
+                  <IconButton onClick={() => handleOpen(barber)}>
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDeleteClick(barber)}>
+                    <Delete />
+                  </IconButton>
+                </Box>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      )}
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>
           {selectedBarber ? 'Editar Profissional' : 'Novo Profissional'}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
+  CircularProgress,
   Container,
   Dialog,
   DialogActions,
@@ -25,6 +26,7 @@ export default function PlansManagement() {
   const [services, setServices] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({
     serviceId: '',
     interval: 'week',
@@ -33,8 +35,10 @@ export default function PlansManagement() {
 
   useEffect(() => {
     if (barbershop?.id) {
-      fetchPlans();
-      fetchServices();
+      setLoading(true);
+      Promise.all([fetchPlans(), fetchServices()]).finally(() =>
+        setLoading(false)
+      );
     }
   }, [barbershop]);
 
@@ -88,8 +92,9 @@ export default function PlansManagement() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     const { serviceId, interval, price } = form;
-    if (!serviceId || !interval || !price) {
+    if (!serviceId || !interval) {
       toast.error('Preencha todos os campos.');
       return;
     }
@@ -99,14 +104,14 @@ export default function PlansManagement() {
         await api.put(`/plans/${editingId}`, {
           serviceId,
           interval,
-          price: Number(price),
+          // price: Number(price),
         });
         toast.success('Plano atualizado com sucesso.');
       } else {
         await api.post('/plans', {
           serviceId,
           interval,
-          price: Number(price),
+          // price: Number(price),
           barbershopId: barbershop?.id,
         });
         toast.success('Plano cadastrado com sucesso.');
@@ -115,6 +120,8 @@ export default function PlansManagement() {
       fetchPlans();
     } catch (err) {
       toast.error('Erro ao salvar plano.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -144,29 +151,34 @@ export default function PlansManagement() {
         Novo Plano
       </Button>
 
-      <Grid container spacing={2}>
-        {plans.map((plan) => (
-          <Grid item xs={12} sm={6} md={4} key={plan.id}>
-            <Paper elevation={2} sx={{ p: 2 }}>
-              <Typography fontWeight={600}>
-                {services.find((s) => s.id === plan.serviceId)?.name ||
-                  'Serviço'}
-              </Typography>
-              <Typography>Intervalo: {plan.interval}</Typography>
-              <Typography>Valor: {formatCurrency(plan.price)}</Typography>
-              <Box display="flex" gap={1} mt={1}>
-                {/* <IconButton onClick={() => openDialog(plan)}>
-                  <Edit />
-                </IconButton>
-                <IconButton onClick={() => handleDelete(plan.id)}>
-                  <Delete />
-                </IconButton> */}
-              </Box>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
-
+      {loading ? (
+        <Box display="flex" justifyContent="center" mt={6}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Grid container spacing={2}>
+          {plans.map((plan) => (
+            <Grid item xs={12} sm={6} md={4} key={plan.id}>
+              <Paper elevation={2} sx={{ p: 2 }}>
+                <Typography fontWeight={600}>
+                  {services.find((s) => s.id === plan.serviceId)?.name ||
+                    'Serviço'}
+                </Typography>
+                <Typography>Intervalo: {plan.interval}</Typography>
+                <Typography>Valor: {formatCurrency(plan.price)}</Typography>
+                <Box display="flex" gap={1} mt={1}>
+                  {/* <IconButton onClick={() => openDialog(plan)}>
+              <Edit />
+            </IconButton>
+            <IconButton onClick={() => handleDelete(plan.id)}>
+              <Delete />
+            </IconButton> */}
+                </Box>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      )}
       <Dialog open={dialogOpen} onClose={closeDialog} fullWidth maxWidth="sm">
         <DialogTitle>{editingId ? 'Editar Plano' : 'Novo Plano'}</DialogTitle>
         <DialogContent>
@@ -197,10 +209,10 @@ export default function PlansManagement() {
                 fullWidth
               >
                 <MenuItem value="week">Semanal</MenuItem>
-                <MenuItem value="month">Mensal</MenuItem>
+                {/* <MenuItem value="month">Mensal</MenuItem> */}
               </TextField>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <TextField
                 name="price"
                 label="Preço"
@@ -208,12 +220,12 @@ export default function PlansManagement() {
                 onChange={handleMoneyChange}
                 fullWidth
               />
-            </Grid>
+            </Grid> */}
           </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={closeDialog}>Cancelar</Button>
-          <Button onClick={handleSubmit} variant="contained">
+          <Button onClick={handleSubmit} variant="contained" loading={loading}>
             {editingId ? 'Salvar Alterações' : 'Cadastrar'}
           </Button>
         </DialogActions>

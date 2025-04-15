@@ -19,7 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { Avatar, Button, Menu, MenuItem, Tooltip } from '@mui/material';
 import { useAuth } from '../../hooks/auth';
 import PurchaseDialog from '../PurchaseDialog';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { key } from '../../config/key';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import { useBalance } from '../../hooks/balance';
@@ -186,7 +186,7 @@ export default function BarbershopPrivateLayout({
 }) {
   const navigate = useNavigate();
   const slug = localStorage.getItem(key.slug);
-
+  const location = useLocation();
   const { user, signOut } = useAuth();
   const { balance } = useBalance();
   const theme = useTheme();
@@ -296,52 +296,29 @@ export default function BarbershopPrivateLayout({
         </DrawerHeader>
         <Divider />
         <List>
-          {menuItems.map((item, index) => (
+          {menuItems.map((item) => (
             <ListItem key={item.label} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
+                selected={location.pathname === item.page} // 👈 Aqui é o destaque
                 onClick={item.page ? () => navigate(item.page) : signOut}
                 sx={[
-                  {
-                    minHeight: 48,
-                    px: 2.5,
-                  },
+                  { minHeight: 48, px: 2.5 },
                   open
-                    ? {
-                        justifyContent: 'initial',
-                      }
-                    : {
-                        justifyContent: 'center',
-                      },
+                    ? { justifyContent: 'initial' }
+                    : { justifyContent: 'center' },
                 ]}
               >
                 <ListItemIcon
                   sx={[
-                    {
-                      minWidth: 0,
-                      justifyContent: 'center',
-                    },
-                    open
-                      ? {
-                          mr: 3,
-                        }
-                      : {
-                          mr: 'auto',
-                        },
+                    { minWidth: 0, justifyContent: 'center' },
+                    open ? { mr: 3 } : { mr: 'auto' },
                   ]}
                 >
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText
                   primary={item.label}
-                  sx={[
-                    open
-                      ? {
-                          opacity: 1,
-                        }
-                      : {
-                          opacity: 0,
-                        },
-                  ]}
+                  sx={[open ? { opacity: 1 } : { opacity: 0 }]}
                 />
               </ListItemButton>
             </ListItem>
@@ -352,6 +329,7 @@ export default function BarbershopPrivateLayout({
           {menuItemsBottom.map((item, index) => (
             <ListItem key={item.label} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
+                selected={location.pathname === item.page}
                 onClick={item.page ? () => navigate(item.page) : signOut}
                 sx={[
                   {

@@ -1115,6 +1115,7 @@ export default function RegisterInformationForm() {
                     label="Nome do Titular"
                     value={form.bank_account.legal_name}
                     onChange={handleChange}
+                    inputProps={{ maxLength: 30 }}
                     name="bank_account.legal_name"
                     error={!!formErrors['bank_account.legal_name']}
                     helperText={formErrors['bank_account.legal_name']}

@@ -119,10 +119,13 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
                   : 'Plano mensal'}
               </Typography>
               <Typography>
-                {(selectedPlan?.price / 100).toLocaleString('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                })}
+                {(Math.round(selectedPlan?.price) / 100).toLocaleString(
+                  'pt-BR',
+                  {
+                    style: 'currency',
+                    currency: 'BRL',
+                  }
+                )}
               </Typography>
             </Box>
             <Box display="flex" justifyContent="space-between" my={1}>
@@ -134,8 +137,9 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
               </Box>
               <Typography>
                 {(
-                  (selectedPlan?.price * (Number(barbershop?.fee) / 100)) /
-                  100
+                  Math.round(
+                    selectedPlan?.price * (Number(barbershop?.fee) / 100)
+                  ) / 100
                 ).toLocaleString('pt-BR', {
                   style: 'currency',
                   currency: 'BRL',
@@ -148,10 +152,10 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
               </Typography>
               <Box textAlign="right">
                 <Typography variant="subtitle1" fontWeight="bold">
-                  {(
+                  {Math.round(
                     (selectedPlan?.price *
                       (1 + Number(barbershop?.fee) / 100)) /
-                    100
+                      100
                   ).toLocaleString('pt-BR', {
                     style: 'currency',
                     currency: 'BRL',

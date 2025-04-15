@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
+  Checkbox,
   CircularProgress,
   Container,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
   Grid,
   IconButton,
   Paper,
@@ -115,7 +117,9 @@ export default function ServicesManagement() {
           name,
           description,
           timeRequired: String(timeRequired || 1),
-          amount: Number(amount),
+          amount: form.passFeeToClient
+            ? form.amount
+            : Math.round(form.amount / (1 + barbershop.fee / 100)),
         });
         toast.success('Serviço atualizado com sucesso!');
       } else {
@@ -123,7 +127,9 @@ export default function ServicesManagement() {
           name,
           description,
           timeRequired,
-          amount: Number(amount),
+          amount: form.passFeeToClient
+            ? form.amount
+            : Math.round(form.amount / (1 + barbershop.fee / 100)),
           barbershopId: barbershop?.id,
         });
         toast.success('Serviço cadastrado com sucesso!');
@@ -218,33 +224,65 @@ export default function ServicesManagement() {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="amount"
-                label="Valor"
+                label="Valor base (sem taxa)"
                 value={formatCurrency(form.amount)}
                 onChange={handleMoneyChange}
                 fullWidth
               />
             </Grid>
-            {/* <Grid item xs={12} sm={6}>
-              <TextField
-                name="timeRequired"
-                label="Duração (HH:mm)"
-                value={form.timeRequired}
-                onChange={handleMaskedTime}
-                placeholder="00:00"
-                fullWidth
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={form.passFeeToClient || false}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        passFeeToClient: e.target.checked,
+                      }))
+                    }
+                  />
+                }
+                label={`Repassar a taxa de ${barbershop?.fee}% para o cliente`}
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                name="description"
-                label="Descrição"
-                value={form.description}
-                onChange={handleChange}
-                fullWidth
-                multiline
-                rows={3}
-              />
-            </Grid> */}
+
+            {form.amount && (
+              <Grid item xs={12}>
+                <Paper elevation={1} sx={{ p: 2, backgroundColor: '#f9f9f9' }}>
+                  <Typography variant="subtitle2" fontWeight="bold">
+                    Resumo para o cliente:
+                  </Typography>
+
+                  <Typography>
+                    Total para o cliente: {formatCurrency(form.amount)}
+                  </Typography>
+
+                  <Typography>
+                    Taxa de processamento ({barbershop?.fee}%):{' '}
+                    {form.passFeeToClient
+                      ? formatCurrency(
+                          Math.round(form.amount * (barbershop.fee / 100))
+                        )
+                      : formatCurrency(
+                          Math.round(
+                            form.amount -
+                              form.amount / (1 + barbershop.fee / 100)
+                          )
+                        )}
+                  </Typography>
+
+                  <Typography fontWeight="bold">
+                    Você receberá:{' '}
+                    {formatCurrency(
+                      form.passFeeToClient
+                        ? form.amount
+                        : Math.round(form.amount / (1 + barbershop.fee / 100))
+                    )}
+                  </Typography>
+                </Paper>
+              </Grid>
+            )}
           </Grid>
         </DialogContent>
         <DialogActions>

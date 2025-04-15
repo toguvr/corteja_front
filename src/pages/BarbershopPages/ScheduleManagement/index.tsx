@@ -217,6 +217,7 @@ export default function ScheduleManagement() {
               <Grid container spacing={2}>
                 {schedules
                   .filter((s) => s.weekDay === selectedWeekDay)
+                  .sort((a, b) => a.time.localeCompare(b.time))
                   .map((s) => (
                     <Grid item xs={6} sm={4} key={s.id}>
                       <Paper elevation={2} style={{ padding: 12 }}>
