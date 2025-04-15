@@ -380,7 +380,7 @@ export default function PurchaseDialog({
                 >
                   <Typography>{item.name}</Typography>
                   <Typography>
-                    {(item?.amount / 100).toLocaleString('pt-BR', {
+                    {(Math.round(item?.amount) / 100).toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
                     })}
@@ -401,7 +401,7 @@ export default function PurchaseDialog({
                 </Box>
                 <Typography>
                   {(
-                    (sumPrices() * (Number(barbershop?.fee) / 100)) /
+                    Math.round(sumPrices() * (Number(barbershop?.fee) / 100)) /
                     100
                   ).toLocaleString('pt-BR', {
                     style: 'currency',
@@ -418,8 +418,9 @@ export default function PurchaseDialog({
                 </Typography>
                 <Typography variant="subtitle1" fontWeight="bold">
                   {(
-                    (sumPrices() * (1 + Number(barbershop?.fee) / 100)) /
-                    100
+                    Math.round(
+                      sumPrices() * (1 + Number(barbershop?.fee) / 100)
+                    ) / 100
                   ).toLocaleString('pt-BR', {
                     style: 'currency',
                     currency: 'BRL',

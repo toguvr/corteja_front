@@ -255,7 +255,12 @@ export default function ServicesManagement() {
                   </Typography>
 
                   <Typography>
-                    Total para o cliente: {formatCurrency(form.amount)}
+                    Total para o cliente:{' '}
+                    {form.passFeeToClient
+                      ? formatCurrency(
+                          Math.round(form.amount * (1 + barbershop.fee / 100))
+                        )
+                      : formatCurrency(form.amount)}
                   </Typography>
 
                   <Typography>
