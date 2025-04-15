@@ -494,7 +494,7 @@ export default function RegisterInformationForm() {
         default_bank_account: {
           bank: form.bank_code,
           branch_number: form.agencia,
-          branch_check_digit: form.agencia_dv,
+          branch_check_digit: form.agencia_dv || 0,
           account_number: form.conta,
           account_check_digit: form.conta_dv,
           type: 'checking',

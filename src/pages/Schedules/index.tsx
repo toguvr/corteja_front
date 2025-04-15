@@ -39,11 +39,14 @@ const formatSimpleDate = (iso: string) => {
   return `${day}/${month}/${year}`;
 };
 const formatDate = (iso: string) => {
-  const d = new Date(iso);
-  return d.toLocaleDateString('pt-BR', {
-    weekday: 'long',
+  const localDate = new Date(iso);
+
+  return localDate.toLocaleString('pt-BR', {
     day: '2-digit',
-    month: 'short',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 };
 
@@ -189,7 +192,7 @@ export default function Schedules() {
               {formatSimpleDate(appointment?.date)}
             </Typography> */}
             <Typography fontWeight="bold">
-              {formatDate(appointment?.date)} - {formatTime(appointment?.date)}
+              {formatDate(appointment?.date)}
             </Typography>
           </Box>
           <Stack direction="row" spacing={1}>
@@ -218,9 +221,7 @@ export default function Schedules() {
           <Stack direction="row" spacing={2}>
             {/* <Avatar src="/avatar.jpg" /> */}
             <Box>
-              <Typography fontWeight="bold">
-                {date}, {time}
-              </Typography>
+              <Typography fontWeight="bold">{date}</Typography>
               {/* <Typography variant="body2">Pago: {valor}</Typography> */}
             </Box>
           </Stack>
@@ -259,7 +260,7 @@ export default function Schedules() {
             </Typography>
             {subscriptions.length ? (
               subscriptions.map((sub) => (
-                <SubscriptionInfo subscription={sub} />
+                <SubscriptionInfo key={sub.id} subscription={sub} />
               ))
             ) : (
               <Typography mt={2} gutterBottom>

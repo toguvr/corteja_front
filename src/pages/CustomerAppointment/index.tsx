@@ -4,6 +4,10 @@ import {
   Button,
   CircularProgress,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Grid,
   IconButton,
   MenuItem,
@@ -36,7 +40,7 @@ export default function CustomerAppointment() {
   const [barbers, setBarbers] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [confirmOpen, setConfirmOpen] = useState(false);
   useEffect(() => {
     if (barbershop?.id) {
       setForm({ ...form, barbershopId: barbershop?.id });
@@ -71,11 +75,17 @@ export default function CustomerAppointment() {
       [e.target.name]: e.target.value,
     }));
   };
-
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
+    setConfirmOpen(true);
+  };
+  const handleConfirmSubmit = async () => {
+    setConfirmOpen(false);
     setLoading(true);
     try {
-      await api.post('/appointments', form);
+      await api.post('/appointments', {
+        ...form,
+        date: new Date(form.date).toISOString(),
+      });
       getSchedules();
       fetchBalance();
       toast.success('Agendamento criado com sucesso!');
@@ -317,6 +327,36 @@ export default function CustomerAppointment() {
           </Container>
         </Box>
       </Box>
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>Confirmar agendamento</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Ao agendar por aqui, o cancelamento só pode ser feito com pelo menos{' '}
+            <strong>
+              {Math.floor((barbershop?.minutesToCancel ?? 0) / 60)} horas
+            </strong>{' '}
+            de antecedência. Após esse período, não será possível cancelar.
+          </Typography>
+          <Typography mt={1}>
+            O valor do agendamento cancelado será restituído como{' '}
+            <strong>saldo</strong> na plataforma, que poderá ser utilizado em
+            outro horário.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmOpen(false)} color="inherit">
+            Voltar
+          </Button>
+          <Button
+            onClick={handleConfirmSubmit}
+            variant="contained"
+            color="primary"
+            disabled={loading}
+          >
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </PrivateLayout>
   );
 }
