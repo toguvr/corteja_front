@@ -33,22 +33,22 @@ import PeopleIcon from '@mui/icons-material/People';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ContentCutIcon from '@mui/icons-material/ContentCut';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import PlanosIcon from '@mui/icons-material/PaymentsOutlined';
 import { toast } from 'react-toastify';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import BookOnlineIcon from '@mui/icons-material/BookOnline';
-
+import DashboardIcon from '@mui/icons-material/DashboardOutlined';
+import AgendaIcon from '@mui/icons-material/EventNote';
+import CurrencyExchangeOutlinedIcon from '@mui/icons-material/CurrencyExchangeOutlined';
 const drawerWidth = 240;
 
 const menuItems = [
   {
     label: 'Dashboard',
-    icon: <CalendarTodayIcon />,
+    icon: <DashboardIcon />,
     page: '/empresa/dashboard',
   },
   {
     label: 'Agenda',
-    icon: <BookOnlineIcon />,
+    icon: <AgendaIcon />,
     page: '/empresa/agenda',
   },
   {
@@ -73,7 +73,7 @@ const menuItems = [
   },
   {
     label: 'Planos',
-    icon: <MonetizationOnIcon />,
+    icon: <CurrencyExchangeOutlinedIcon />,
     page: '/empresa/planos',
   },
   {

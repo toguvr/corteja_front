@@ -152,10 +152,10 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
               </Typography>
               <Box textAlign="right">
                 <Typography variant="subtitle1" fontWeight="bold">
-                  {Math.round(
-                    (selectedPlan?.price *
-                      (1 + Number(barbershop?.fee) / 100)) /
-                      100
+                  {(
+                    Math.round(
+                      selectedPlan?.price * (1 + Number(barbershop?.fee) / 100)
+                    ) / 100
                   ).toLocaleString('pt-BR', {
                     style: 'currency',
                     currency: 'BRL',
@@ -201,7 +201,7 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
               sx={{ py: 1.5 }}
               onClick={confirmarAssinatura}
             >
-              Confirmar assinatura mensal
+              Confirmar assinatura
             </Button>
 
             <Typography
@@ -210,9 +210,8 @@ const ScheduleDialog: React.FC<ScheduleDialogProps> = ({
               textAlign="center"
               mt={2}
             >
-              Ao clicar no botão "Confirmar assinatura mensal", você concorda
-              com a{' '}
-              <Link href="#" underline="hover">
+              Ao clicar no botão "Confirmar assinatura", você concorda com a{' '}
+              <Link href="#" underline="hover" color="secondary">
                 Política de Reembolso e Pagamento
               </Link>
             </Typography>

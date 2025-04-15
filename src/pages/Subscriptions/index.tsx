@@ -270,15 +270,17 @@ export default function Assinaturas() {
                           {sub?.schedule?.time}
                         </Typography>
                       </CardContent>
-                      <CardActions>
-                        <Button
-                          size="small"
-                          color="error"
-                          onClick={() => openCancelDialog(sub.id)}
-                        >
-                          Cancelar
-                        </Button>
-                      </CardActions>
+                      {!sub.canceledAt && (
+                        <CardActions>
+                          <Button
+                            size="small"
+                            color="error"
+                            onClick={() => openCancelDialog(sub.id)}
+                          >
+                            Cancelar
+                          </Button>
+                        </CardActions>
+                      )}
                     </Card>
                   </Grid>
                 ))

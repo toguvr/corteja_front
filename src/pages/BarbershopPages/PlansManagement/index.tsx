@@ -22,6 +22,7 @@ import { useBarbershop } from '../../../hooks/barbershop';
 
 export default function PlansManagement() {
   const { barbershop } = useBarbershop();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [plans, setPlans] = useState([]);
   const [services, setServices] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -32,7 +33,7 @@ export default function PlansManagement() {
     interval: 'week',
     price: '',
   });
-
+  const [planToDelete, setPlanToDelete] = useState(null);
   useEffect(() => {
     if (barbershop?.id) {
       setLoading(true);
@@ -124,15 +125,21 @@ export default function PlansManagement() {
       setLoading(false);
     }
   };
+  const confirmDelete = (id) => {
+    setPlanToDelete(id);
+    setDeleteDialogOpen(true);
+  };
 
-  const handleDelete = async (id) => {
-    const confirm = window.confirm('Deseja excluir este plano?');
-    if (!confirm) return;
+  const handleDelete = async () => {
     try {
-      await api.delete(`/plans/${id}`);
+      await api.delete(`/plans/${planToDelete}`);
+      toast.success('Plano excluído com sucesso.');
       fetchPlans();
     } catch {
       toast.error('Erro ao excluir plano.');
+    } finally {
+      setDeleteDialogOpen(false);
+      setPlanToDelete(null);
     }
   };
 
@@ -164,21 +171,39 @@ export default function PlansManagement() {
                   {services.find((s) => s.id === plan.serviceId)?.name ||
                     'Serviço'}
                 </Typography>
-                <Typography>Intervalo: {plan.interval}</Typography>
+                <Typography>
+                  Intervalo: {plan.interval === 'seek' ? 'Semanal' : 'Mensal'}
+                </Typography>
                 <Typography>Valor: {formatCurrency(plan.price)}</Typography>
                 <Box display="flex" gap={1} mt={1}>
                   {/* <IconButton onClick={() => openDialog(plan)}>
               <Edit />
-            </IconButton>
-            <IconButton onClick={() => handleDelete(plan.id)}>
-              <Delete />
             </IconButton> */}
+                  <IconButton onClick={() => confirmDelete(plan.id)}>
+                    <Delete />
+                  </IconButton>
                 </Box>
               </Paper>
             </Grid>
           ))}
         </Grid>
       )}
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Confirmar exclusão</DialogTitle>
+        <DialogContent>
+          <Typography>Tem certeza que deseja excluir este plano?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancelar</Button>
+          <Button onClick={handleDelete} variant="contained" color="error">
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Dialog open={dialogOpen} onClose={closeDialog} fullWidth maxWidth="sm">
         <DialogTitle>{editingId ? 'Editar Plano' : 'Novo Plano'}</DialogTitle>
         <DialogContent>
