@@ -151,7 +151,7 @@ export default function LoyaltyCard() {
             </Box>
           </Collapse>
 
-          {isReadyToRedeem && !redeemed && (
+          {isReadyToRedeem && (
             <Button
               variant="contained"
               color="success"
