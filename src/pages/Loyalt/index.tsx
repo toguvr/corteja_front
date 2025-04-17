@@ -77,7 +77,16 @@ export default function LoyaltyCard() {
       </Typography>
 
       <Typography variant="body1" color="text.secondary" mb={2}>
-        Ganhe 1 selo por pagamento. Ao completar {totalRequired}, você recebe{' '}
+        Ganhe 1 selo por pagamento
+        {barbershop?.minAmountToStamp &&
+          ` acima de ${(barbershop?.minAmountToStamp / 100).toLocaleString(
+            'pt-BR',
+            {
+              style: 'currency',
+              currency: 'BRL',
+            }
+          )}`}
+        . Ao completar {totalRequired}, você recebe{' '}
         <Typography component="span" fontWeight="bold" color="success.main">
           {rewardValue.toLocaleString('pt-BR', {
             style: 'currency',

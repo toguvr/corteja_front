@@ -97,18 +97,26 @@ export default function PurchaseDialog({
     navigator.clipboard.writeText(pix.qrCode);
     toast.success('Código Pix copiado!');
   };
+  // const handleChange = (event: any) => {
+  //   const {
+  //     target: { value },
+  //   } = event;
+
+  //   const selectedIds = typeof value === 'string' ? value.split(',') : value;
+
+  //   const newCart = services.filter((service) =>
+  //     selectedIds.includes(service.id)
+  //   );
+
+  //   setCart(newCart);
+  // };
+
   const handleChange = (event: any) => {
-    const {
-      target: { value },
-    } = event;
+    const selectedId = event.target.value;
 
-    const selectedIds = typeof value === 'string' ? value.split(',') : value;
+    const selectedService = services.find((s) => s.id === selectedId);
 
-    const newCart = services.filter((service) =>
-      selectedIds.includes(service.id)
-    );
-
-    setCart(newCart);
+    setCart(selectedService ? [selectedService] : []);
   };
 
   async function getPaymentStatus() {
@@ -252,7 +260,7 @@ export default function PurchaseDialog({
               <InputLabel id="demo-multiple-checkbox-label">
                 Serviços
               </InputLabel>
-              <Select
+              {/* <Select
                 labelId="demo-multiple-checkbox-label"
                 id="demo-multiple-checkbox"
                 multiple
@@ -272,6 +280,29 @@ export default function PurchaseDialog({
                     <Checkbox
                       checked={cart.some((item) => item.id === service.id)}
                     />
+                    <ListItemText
+                      primary={
+                        service?.name +
+                        ' - ' +
+                        (service?.amount / 100).toLocaleString('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        })
+                      }
+                    />
+                  </MenuItem>
+                ))}
+              </Select> */}
+              <Select
+                labelId="demo-single-select-label"
+                id="demo-single-select"
+                value={cart[0]?.id || ''}
+                onChange={handleChange}
+                fullWidth
+                input={<OutlinedInput label="Serviço" />}
+              >
+                {services.map((service) => (
+                  <MenuItem key={service?.id} value={service?.id}>
                     <ListItemText
                       primary={
                         service?.name +
