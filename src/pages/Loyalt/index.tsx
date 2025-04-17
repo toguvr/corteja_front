@@ -67,7 +67,7 @@ export default function LoyaltyCard() {
   const rewardValue = (barbershop?.loyaltyReward || 1000) / 100;
   const progress = (stamps / totalRequired) * 100;
   // const isReadyToRedeem = stamps >= totalRequired;
-  const isReadyToRedeem = cycles > 0 && stamps === 0 && totalRewards === cycles;
+  const isReadyToRedeem = cycles > 0 && stamps === 0 && totalRewards < cycles;
 
   return (
     <Paper
