@@ -32,7 +32,7 @@ export default function LoyaltyCard() {
   const fetchStamps = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get(`/stamps/${barbershop?.id}`);
+      const { data } = await api.get(`/stamps/barbershop/${barbershop?.id}`);
       setStamps(data.totalStamps);
     } catch (err) {
       console.error('Erro ao buscar selos', err);
@@ -44,7 +44,7 @@ export default function LoyaltyCard() {
   const handleRedeem = async () => {
     try {
       setLoading(true);
-      await api.post(`/loyalty`, {
+      await api.post(`/stamps`, {
         barbershopId: barbershop?.id,
       });
       toast.success('Bônus resgatado com sucesso!');
