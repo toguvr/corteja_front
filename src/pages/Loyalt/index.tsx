@@ -17,11 +17,15 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useBarbershop } from '../../hooks/barbershop';
 import api from '../../services/api';
 import { toast } from 'react-toastify';
+import { useBalance } from '../../hooks/balance';
 
 export default function LoyaltyCard() {
   const theme = useTheme();
   const { barbershop } = useBarbershop();
+  const { fetchBalance } = useBalance();
   const [stamps, setStamps] = useState<number>(0);
+  const [totalRewards, setTotalRewards] = useState<number>(0);
+  const [cycles, setCycles] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [redeemed, setRedeemed] = useState<boolean>(false);
 
@@ -34,6 +38,8 @@ export default function LoyaltyCard() {
       setLoading(true);
       const { data } = await api.get(`/stamps/barbershop/${barbershop?.id}`);
       setStamps(data.totalStamps);
+      setCycles(data.completedCycles);
+      setCycles(data.totalRewards);
     } catch (err) {
       console.error('Erro ao buscar selos', err);
     } finally {
@@ -49,6 +55,7 @@ export default function LoyaltyCard() {
       });
       toast.success('Bônus resgatado com sucesso!');
       fetchStamps(); // recarrega os dados
+      fetchBalance();
     } catch (err) {
       toast.error('Você ainda não pode resgatar.');
     } finally {
@@ -59,7 +66,8 @@ export default function LoyaltyCard() {
   const totalRequired = barbershop?.loyaltyStamps || 5;
   const rewardValue = (barbershop?.loyaltyReward || 1000) / 100;
   const progress = (stamps / totalRequired) * 100;
-  const isReadyToRedeem = stamps >= totalRequired;
+  // const isReadyToRedeem = stamps >= totalRequired;
+  const isReadyToRedeem = cycles > 0 && stamps === 0 && totalRewards === cycles;
 
   return (
     <Paper
