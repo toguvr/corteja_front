@@ -39,7 +39,7 @@ export default function LoyaltyCard() {
       const { data } = await api.get(`/stamps/barbershop/${barbershop?.id}`);
       setStamps(data.totalStamps);
       setCycles(data.completedCycles);
-      setCycles(data.totalRewards);
+      setTotalRewards(data.totalRewards);
     } catch (err) {
       console.error('Erro ao buscar selos', err);
     } finally {
@@ -67,6 +67,7 @@ export default function LoyaltyCard() {
   const rewardValue = (barbershop?.loyaltyReward || 1000) / 100;
   const progress = (stamps / totalRequired) * 100;
   // const isReadyToRedeem = stamps >= totalRequired;
+  console.log(stamps, totalRewards, cycles);
   const isReadyToRedeem = cycles > 0 && stamps === 0 && totalRewards < cycles;
 
   return (
