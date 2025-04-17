@@ -36,6 +36,9 @@ export interface BarbershopDto {
   password: string;
   haveLoyalty: boolean;
   fee?: number;
+  weeksToSchedule?: number;
+  loyaltyReward?: number;
+  loyaltyStamps?: number;
   slug: string;
   addressId?: string;
   bankId?: string;

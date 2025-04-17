@@ -151,9 +151,16 @@ export default function CustomerAppointment() {
     d1.getDate() === d2.getDate();
 
   const isBeforeToday = (date: Date) => date < realToday;
-
+  const numberOfWeeks = barbershop?.weeksToSchedule;
   const canGoBack = weekStart.getTime() > currentWeekStart.getTime();
-  const canGoForward = weekStart.getTime() < nextWeekStart.getTime();
+
+  const canGoForward =
+    weekStart.getTime() <
+    getStartOfWeek(
+      new Date(
+        realToday.getTime() + (numberOfWeeks - 1) * 7 * 24 * 60 * 60 * 1000
+      )
+    ).getTime();
 
   const handleNextWeek = () => {
     if (canGoForward) {

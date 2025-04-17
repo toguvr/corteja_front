@@ -25,6 +25,8 @@ import PublicLayoutBarbershop from '../components/PublicLayoutBarbershop';
 import RecipientBalancePage from '../pages/BarbershopPages/Balance';
 import { ForgotBarbershopPassword } from '../pages/BarbershopPages/ForgotBarbershopPassword';
 import { ResetBarbershopPassword } from '../pages/BarbershopPages/ResetBarbershopPassword';
+import LoyaltyCard from '../pages/Loyalt';
+import PrivateLayout from '../components/PrivateLayout';
 
 const AppRouter = () => {
   return (
@@ -37,6 +39,18 @@ const AppRouter = () => {
       <Route
         path="/assinatura/:slug"
         element={<PrivateRoute element={<Assinaturas />} />}
+      />
+      <Route
+        path="/fidelidade/:slug"
+        element={
+          <PrivateRoute
+            element={
+              <PrivateLayout>
+                <LoyaltyCard />
+              </PrivateLayout>
+            }
+          />
+        }
       />
       <Route
         path="/agendamentos"

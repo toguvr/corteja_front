@@ -21,7 +21,7 @@ import { useAuth } from '../../hooks/auth';
 import PurchaseDialog from '../PurchaseDialog';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { key } from '../../config/key';
-import LoyaltyIcon from '@mui/icons-material/Loyalty';
+import LoyaltyIcon from '@mui/icons-material/LoyaltyOutlined';
 import { useBalance } from '../../hooks/balance';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
@@ -33,7 +33,7 @@ const drawerWidth = 240;
 const menuItems = [
   { label: 'Agendar', icon: <CalendarTodayIcon />, page: '/agendar' },
   { label: 'Assinatura', icon: <WorkspacePremiumIcon />, page: '/assinatura' },
-  // { label: 'Fidelidade', icon: <LoyaltyIcon />, page: '/fidelidade' },
+  { label: 'Fidelidade', icon: <LoyaltyIcon />, page: '/fidelidade' },
 ];
 const menuItemsBottom = [
   {

@@ -210,7 +210,6 @@ export default function Assinaturas() {
           Ao contratar uma assinatura, o horário escolhido será reservado
           exclusivamente para você.
           <strong>
-            {' '}
             A partir da próxima ocorrência disponível do dia da semana
             selecionado
           </strong>
