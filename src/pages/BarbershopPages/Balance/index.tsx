@@ -7,30 +7,75 @@ import {
   CircularProgress,
   Box,
   Alert,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
 } from '@mui/material';
-import api from '../../../services/api'; // ajuste conforme sua estrutura
+import api from '../../../services/api';
 import { useAuth } from '../../../hooks/auth';
+import { toast } from 'react-toastify';
 
 export default function RecipientBalancePage() {
   const [balance, setBalance] = useState(null);
+  const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { isAuthenticated } = useAuth(); // ajuste conforme sua estrutura
-  useEffect(() => {
-    const fetchBalance = async () => {
-      if (!isAuthenticated) return;
-      try {
-        const { data } = await api.get(`/payments/barbershop`);
-        setBalance(data);
-      } catch (err) {
-        setError('Erro ao buscar o saldo do recebedor.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const { isAuthenticated } = useAuth();
 
+  const fetchBalance = async () => {
+    if (!isAuthenticated) return;
+    try {
+      const { data } = await api.get(`/payments/barbershop`);
+      setBalance(data);
+    } catch (err) {
+      toast.error('Erro ao buscar o saldo do recebedor.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchWithdrawals = async () => {
+    if (!isAuthenticated) return;
+    try {
+      const { data } = await api.get(`/payments/barbershop/withdrawals`);
+      setWithdrawals(data.data);
+    } catch (err) {
+      toast.error('Erro ao buscar o histórico de saques.');
+    }
+  };
+
+  useEffect(() => {
     fetchBalance();
+    fetchWithdrawals();
   }, [isAuthenticated]);
+
+  const handleWithdrawRequest = () => {
+    setWithdrawDialogOpen(true);
+  };
+
+  const handleWithdrawConfirm = async () => {
+    try {
+      await api.post('/payments/barbershop/withdraw', {
+        amount: parseInt(withdrawAmount.replace(/\D/g, ''), 10),
+      });
+      toast.success('Saque solicitado com sucesso!');
+      setWithdrawDialogOpen(false);
+      setWithdrawAmount('');
+      fetchBalance();
+      fetchWithdrawals();
+    } catch (err) {
+      toast.error('Erro ao solicitar saque.');
+    }
+  };
 
   if (loading) {
     return (
@@ -54,7 +99,7 @@ export default function RecipientBalancePage() {
         Extrato Financeiro
       </Typography>
 
-      <Paper elevation={3} sx={{ p: 3 }}>
+      <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography variant="subtitle1">Saldo Disponível</Typography>
@@ -87,8 +132,82 @@ export default function RecipientBalancePage() {
               })}
             </Typography>
           </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleWithdrawRequest}
+            >
+              Solicitar Saque
+            </Button>
+          </Grid>
         </Grid>
       </Paper>
+
+      <Typography variant="h6" gutterBottom>
+        Histórico de Saques
+      </Typography>
+      {withdrawals.length === 0 ? (
+        <Typography variant="body2" color="textSecondary">
+          Nenhum saque realizado ainda.
+        </Typography>
+      ) : (
+        <Paper variant="outlined">
+          <List>
+            {withdrawals.map((item, index) => (
+              <React.Fragment key={item.id || index}>
+                <ListItem>
+                  <ListItemText
+                    primary={(item.amount / 100).toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    })}
+                    secondary={new Date(item.created_at).toLocaleString(
+                      'pt-BR'
+                    )}
+                  />
+                </ListItem>
+                {index < withdrawals.length - 1 && <Divider />}
+              </React.Fragment>
+            ))}
+          </List>
+        </Paper>
+      )}
+
+      <Dialog
+        open={withdrawDialogOpen}
+        onClose={() => setWithdrawDialogOpen(false)}
+      >
+        <DialogTitle>Solicitar Saque</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Valor do saque"
+            fullWidth
+            autoFocus
+            value={withdrawAmount}
+            onChange={(e) => {
+              const onlyNumbers = e.target.value.replace(/\D/g, '');
+              const formatted = (Number(onlyNumbers) / 100).toLocaleString(
+                'pt-BR',
+                {
+                  style: 'currency',
+                  currency: 'BRL',
+                }
+              );
+              setWithdrawAmount(formatted);
+            }}
+            placeholder="R$ 0,00"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setWithdrawDialogOpen(false)}>Cancelar</Button>
+          <Button variant="contained" onClick={handleWithdrawConfirm}>
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
