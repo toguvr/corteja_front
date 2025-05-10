@@ -160,13 +160,26 @@ export default function RecipientBalancePage() {
               <React.Fragment key={item.id || index}>
                 <ListItem>
                   <ListItemText
-                    primary={(item.amount / 100).toLocaleString('pt-BR', {
+                    primary={` ${(item.amount / 100).toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
-                    })}
-                    secondary={new Date(item.created_at).toLocaleString(
-                      'pt-BR'
-                    )}
+                    })} - ${new Date(item.created_at).toLocaleString('pt-BR')}`}
+                    secondary={
+                      item.status === 'failed'
+                        ? 'falha'
+                        : item.status === 'pending'
+                          ? 'pendente'
+                          : 'concluído'
+                    }
+                    secondaryTypographyProps={{
+                      color:
+                        item.status === 'failed'
+                          ? 'red'
+                          : item.status === 'pending'
+                            ? 'orange'
+                            : 'green',
+                      fontWeight: 'bold',
+                    }}
                   />
                 </ListItem>
                 {index < withdrawals.length - 1 && <Divider />}
