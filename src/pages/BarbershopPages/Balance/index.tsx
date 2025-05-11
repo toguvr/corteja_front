@@ -17,6 +17,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  AlertTitle,
 } from '@mui/material';
 import api from '../../../services/api';
 import { useAuth } from '../../../hooks/auth';
@@ -30,6 +31,8 @@ export default function RecipientBalancePage() {
   const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const { isAuthenticated } = useAuth();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
 
   const fetchBalance = async () => {
     if (!isAuthenticated) return;
@@ -43,11 +46,15 @@ export default function RecipientBalancePage() {
     }
   };
 
-  const fetchWithdrawals = async () => {
+  const fetchWithdrawals = async (page = 1, append = false) => {
     if (!isAuthenticated) return;
     try {
-      const { data } = await api.get(`/payments/barbershop/withdrawals`);
-      setWithdrawals(data.data);
+      const { data } = await api.get(
+        `/payments/barbershop/withdrawals?page=${page}`
+      );
+      setWithdrawals((prev) => (append ? [...prev, ...data.data] : data.data));
+      setHasMore(!!data.paging?.next);
+      setCurrentPage(page);
     } catch (err) {
       toast.error('Erro ao buscar o histórico de saques.');
     }
@@ -95,6 +102,15 @@ export default function RecipientBalancePage() {
 
   return (
     <Container maxWidth="sm">
+      <Alert severity="info" sx={{ mb: 4 }}>
+        <AlertTitle>Importante sobre o saque</AlertTitle>
+        <strong>
+          Cada saque possui uma taxa fixa de R$ 3,67, referente à operação
+          bancária.
+        </strong>
+        <br />A transferência ocorre via TED comum, ou seja, será efetivada
+        apenas em dias úteis.
+      </Alert>
       <Typography variant="h5" mt={4} mb={2}>
         Extrato Financeiro
       </Typography>
@@ -154,39 +170,51 @@ export default function RecipientBalancePage() {
           Nenhum saque realizado ainda.
         </Typography>
       ) : (
-        <Paper variant="outlined">
-          <List>
-            {withdrawals.map((item, index) => (
-              <React.Fragment key={item.id || index}>
-                <ListItem>
-                  <ListItemText
-                    primary={` ${(item.amount / 100).toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    })} - ${new Date(item.created_at).toLocaleString('pt-BR')}`}
-                    secondary={
-                      item.status === 'failed'
-                        ? 'falha'
-                        : item.status === 'pending'
-                          ? 'pendente'
-                          : 'concluído'
-                    }
-                    secondaryTypographyProps={{
-                      color:
+        <>
+          <Paper variant="outlined">
+            <List>
+              {withdrawals.map((item, index) => (
+                <React.Fragment key={item.id || index}>
+                  <ListItem>
+                    <ListItemText
+                      primary={` ${(item.amount / 100).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })} - ${new Date(item.created_at).toLocaleString('pt-BR')}`}
+                      secondary={
                         item.status === 'failed'
-                          ? 'red'
+                          ? 'falha'
                           : item.status === 'pending'
-                            ? 'orange'
-                            : 'green',
-                      fontWeight: 'bold',
-                    }}
-                  />
-                </ListItem>
-                {index < withdrawals.length - 1 && <Divider />}
-              </React.Fragment>
-            ))}
-          </List>
-        </Paper>
+                            ? 'pendente'
+                            : 'concluído'
+                      }
+                      secondaryTypographyProps={{
+                        color:
+                          item.status === 'failed'
+                            ? 'red'
+                            : item.status === 'pending'
+                              ? 'orange'
+                              : 'green',
+                        fontWeight: 'bold',
+                      }}
+                    />
+                  </ListItem>
+                  {index < withdrawals.length - 1 && <Divider />}
+                </React.Fragment>
+              ))}
+            </List>
+          </Paper>
+          {hasMore && (
+            <Box textAlign="center" p={2}>
+              <Button
+                variant="outlined"
+                onClick={() => fetchWithdrawals(currentPage + 1, true)}
+              >
+                Carregar mais
+              </Button>
+            </Box>
+          )}
+        </>
       )}
 
       <Dialog
