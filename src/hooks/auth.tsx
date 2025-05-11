@@ -87,13 +87,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = useCallback(() => {
-    if (data.role === 'admin') {
-      navigate('/admin');
-    }
+    const role = localStorage.getItem(key.role);
     const slug = localStorage.getItem(key.slug);
     localStorage.clear();
     localStorage.setItem(key.slug, slug!!);
-
+    if (role === 'admin') {
+      localStorage.setItem(key.role, 'admin');
+    }
     setData({} as AuthState);
   }, []);
 

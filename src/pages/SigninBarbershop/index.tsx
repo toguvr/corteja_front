@@ -1,5 +1,5 @@
 // pages/entrar/barbearia.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   TextField,
   InputAdornment,
@@ -20,6 +20,7 @@ import PublicLayout from '../../components/PublicLayout';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { ForgotPassword, LoginTitle, RegisterLink } from './styles';
+import { key } from '../../config/key';
 
 const SignInBarbershop = () => {
   const { signIn } = useAuth();
@@ -29,6 +30,13 @@ const SignInBarbershop = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  useEffect(() => {
+    const adminStorage = localStorage.getItem(key.role);
+    if (adminStorage === 'admin') {
+      localStorage.removeItem(key.role);
+    }
+  }, []);
 
   async function handleSignIn() {
     setErrors({});

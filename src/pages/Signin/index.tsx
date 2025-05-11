@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   TextField,
   InputAdornment,
@@ -29,8 +29,10 @@ import PublicLayout from '../../components/PublicLayout';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { key } from '../../config/key';
+import { useNavigate } from 'react-router-dom';
 
 export const SignIn = () => {
+  const navigation = useNavigate();
   const { signIn } = useAuth();
   const [errors, setErrors] = useState<{ [key: string]: any }>({});
   const [loading, setLoading] = useState(false);
@@ -40,6 +42,14 @@ export const SignIn = () => {
   });
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  useEffect(() => {
+    const adminStorage = localStorage.getItem(key.role);
+    if (adminStorage === 'admin') {
+      navigation('/admin');
+    }
+  }, []);
+
   async function handleSignIn() {
     setErrors({});
     setLoading(true);
