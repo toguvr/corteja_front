@@ -71,8 +71,23 @@ export default function RecipientBalancePage() {
 
   const handleWithdrawConfirm = async () => {
     try {
+      const rawAmount = parseInt(withdrawAmount.replace(/\D/g, ''), 10);
+      const fee = 367; // R$ 3,67
+      const totalWithFee = rawAmount;
+      const amountToTransfer = rawAmount - fee;
+
+      if (amountToTransfer <= 0) {
+        toast.error('O valor do saque deve ser maior que a taxa de R$ 3,67.');
+        return;
+      }
+
+      if (totalWithFee > balance?.available_amount) {
+        toast.error('Saldo insuficiente para esse saque.');
+        return;
+      }
+
       await api.post('/payments/barbershop/withdraw', {
-        amount: parseInt(withdrawAmount.replace(/\D/g, ''), 10),
+        amount: amountToTransfer,
       });
       toast.success('Saque solicitado com sucesso!');
       setWithdrawDialogOpen(false);
